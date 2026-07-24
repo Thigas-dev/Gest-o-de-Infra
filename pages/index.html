@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal HelpDesk - V1</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <script src="/script/script.js" defer></script>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+            Portal Infra
+        </div>
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item">Ativos (Impressoras)</div>
+        <div class="nav-item">Switches & Portas</div>
+        <div class="nav-item">Relatórios</div>
+        <div style="flex: 1;"></div>
+        <div class="nav-item" style="border: 1px solid rgba(255,255,255,0.4); text-align: center;">Configurações</div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header-action">
+            <h1>Gestão de Infraestrutura</h1>
+            <button class="btn-primary" onclick="openModal()">+ Novo Mapeamento</button>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="glass-card stat-card">
+                <div class="stat-value" style="color: var(--tertiary);" id="count-na-rede">0</div>
+                <div class="stat-label">Impressoras Na Rede</div>
+            </div>
+            <div class="glass-card stat-card secondary">
+                <div class="stat-value" style="color: var(--neutral);">8</div>
+                <div class="stat-label">Switches Mapeados</div>
+            </div>
+            <div class="glass-card stat-card alert">
+                <div class="stat-value" style="color: var(--primary);" id="count-reserva">0</div>
+                <div class="stat-label">Ativos em Reserva</div>
+            </div>
+        </div>
+        
+        <div class="glass-card" style="flex: 1;">
+            <div class="table-header">
+                <h2>Inventário Atual</h2>
+                <input type="text" class="search-bar" id="searchInput" placeholder="Pesquisar por IP, Hostname ou Modelo..." onkeyup="filterTable()">
+            </div>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Hostname</th>
+                        <th>Endereço IP</th>
+                        <th>Modelo</th>
+                        <th>Fabricante</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Novo Mapeamento -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Equipamento</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="addForm" onsubmit="saveEquipamento(event)">
+                <div class="form-group">
+                    <label>Hostname</label>
+                    <input type="text" id="formHost" required placeholder="Ex: Imp-Recepcao">
+                </div>
+                <div class="form-group">
+                    <label>Endereço IP</label>
+                    <input type="text" id="formIp" required placeholder="Ex: 10.0.2.x">
+                </div>
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Fabricante</label>
+                        <select id="formMarca" required>
+                            <option value="">Selecione...</option>
+                            <option value="BROTHER">BROTHER</option>
+                            <option value="OKI">OKI</option>
+                            <option value="ZEBRA">ZEBRA</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Modelo</label>
+                        <input type="text" id="formModelo" required placeholder="Ex: DCP-L5652DN">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="formStatus">
+                        <option value="Na Rede">Na Rede</option>
+                        <option value="Reserva">Reserva</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar no Banco</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
