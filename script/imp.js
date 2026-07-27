@@ -1,4 +1,4 @@
-// Dados simulados baseados na planilha real
+// Dados simulados baseados na planilha (Prontos para serem substituídos via SQL futuramente)
 let dadosImpressoras = [
     { id: 1, host: "Imp-AdmBS", ip: "10.0.2.18", modelo: "DCP-L5652DN", marca: "BROTHER", serial: "U64198L7N608948", status: "Na Rede" },
     { id: 2, host: "Imp-AdmEnfermagem", ip: "10.0.2.9", modelo: "DCP-L5652DN", marca: "BROTHER", serial: "U64198L9N303969", status: "Na Rede" },
@@ -8,22 +8,15 @@ let dadosImpressoras = [
     { id: 6, host: "Imp-Triagem-01", ip: "10.0.2.19", modelo: "ES5112", marca: "OKI", serial: "AK8B038135", status: "Na Rede" }
 ];
 
+// Função que monta o HTML de cada card
 function renderCards(data) {
     const grid = document.getElementById('printersGrid');
     
-    // Verifica se o grid existe na página (para evitar erros se o script rodar em uma página sem ele)
-    if (!grid) return;
-    
+    // Limpa o grid antes de montar os novos cards
     grid.innerHTML = '';
-
-    let countNaRede = 0;
-    let countReserva = 0;
 
     data.forEach(item => {
         let badgeClass = item.status === 'Na Rede' ? 'badge-ok' : 'badge-alert';
-
-        if (item.status === 'Na Rede') countNaRede++;
-        if (item.status === 'Reserva') countReserva++;
 
         const card = document.createElement('div');
         card.className = 'printer-card';
@@ -51,33 +44,58 @@ function renderCards(data) {
                 </div>
             </div>
             <div class="printer-footer">
-                <button class="btn-edit">Editar Impressora</button>
+                <button class="btn-edit">Editar Ativo</button>
             </div>
         `;
         grid.appendChild(card);
     });
-
-    // Atualiza os contadores do topo da tela do Dashboard
-    const elNaRede = document.getElementById('count-na-rede');
-    const elReserva = document.getElementById('count-reserva');
-    
-    if (elNaRede) elNaRede.innerText = countNaRede;
-    if (elReserva) elReserva.innerText = countReserva;
 }
 
+// Filtro de pesquisa em tempo real
 function filterCards() {
-    const searchInput = document.getElementById('searchInput');
-    if (!searchInput) return;
+    const query = document.getElementById('searchInput').value.toLowerCase();
     
-    const query = searchInput.value.toLowerCase();
     const filteredData = dadosImpressoras.filter(item =>
         item.host.toLowerCase().includes(query) ||
         item.ip.toLowerCase().includes(query) ||
         item.modelo.toLowerCase().includes(query) ||
         item.serial.toLowerCase().includes(query)
     );
+    
     renderCards(filteredData);
 }
 
-// Inicializa a renderização quando a página carrega
+// Controles do Modal de Cadastro
+function openModal() {
+    document.getElementById('addModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('addModal').classList.remove('active');
+    document.getElementById('addForm').reset();
+}
+
+function saveEquipamento(event) {
+    event.preventDefault();
+
+    // Captura os valores do formulário
+    const novoItem = {
+        id: dadosImpressoras.length + 1,
+        host: document.getElementById('formHost').value,
+        ip: document.getElementById('formIp').value,
+        modelo: document.getElementById('formModelo').value,
+        marca: document.getElementById('formMarca').value,
+        serial: document.getElementById('formSerial').value,
+        status: document.getElementById('formStatus').value
+    };
+
+    // Adiciona ao array e atualiza a tela
+    dadosImpressoras.push(novoItem);
+    renderCards(dadosImpressoras);
+    
+    closeModal();
+    setTimeout(() => alert('Registro preparado para inserção no Banco de Dados!'), 100);
+}
+
+// Quando a página terminar de carregar, renderiza os dados iniciais
 window.onload = () => renderCards(dadosImpressoras);

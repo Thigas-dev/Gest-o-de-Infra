@@ -1,77 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Infra</title>
-    <link rel="stylesheet" href="/styles/style.css">
-    <script src="/script/script.js" defer></script>
+    <title>Portal Infra - Impressoras</title>
+    
+    <link rel="stylesheet" href="/styles/impressoras.css">
+    <script src="/script/imp.js" defer></script>
 
-    <!-- Favicon padrão -->
+    <!-- Ícones -->
     <link rel="icon" href="/img/icon/favicon.ico" type="image/x-icon">
-
-    <!-- Ícone para dispositivos Apple -->
-    <link rel="apple-touch-icon" href="/img/icon/apple-touch-icon.webp">
-
-    <!-- WEBP (navegadores modernos) -->
-    <link rel="icon" type="image/webp" sizes="32x32" href="/img/icon/favicon-32x32.webp">
-    <link rel="icon" type="image/webp" sizes="16x16" href="/img/icon/favicon-16x16.webp">
-
-    <!-- Manifest (opcional, mas recomendado) -->
-    <link rel="manifest" href="img/icon/site.webmanifest">
 </head>
-
 <body>
-
     <div class="sidebar">
         <div class="logo">
-            <!-- O style="width: 40px; height: auto;" trava o tamanho da imagem. 
-             Você pode aumentar ou diminuir o 40px conforme precisar. -->
-            <img src="/img/fotos/logo.png" alt="Logo Portal Infra"
-                style="width: 40px; height: auto; margin-right: 10px;">
+            <img src="/img/fotos/logo.png" alt="Logo Portal Infra" style="width: 40px; height: auto; margin-right: 10px;">
             Portal Infra Honcord
         </div>
-        <!-- Trocamos <div> por <a> e adicionamos o link no href -->
-        <a href="/pages/index.html" class="nav-item active">Dashboard</a>
-        <a href="/pages/impressoras.html" class="nav-item">Ativos (Impressoras)</a>
+        
+        <a href="/pages/index.html" class="nav-item">Dashboard</a>
+        <a href="/pages/impressoras.html" class="nav-item active">Ativos (Impressoras)</a>
         <a href="/pages/switches.html" class="nav-item">Switches & Portas</a>
         <a href="/pages/relatorios.html" class="nav-item">Relatórios</a>
     </div>
-    </div>
 
+    <!-- CONTEÚDO PRINCIPAL FOCADO EM GERENCIAMENTO -->
     <div class="main-content">
         <div class="header-action">
-            <h1>Gestão de Infraestrutura</h1>
-        </div>
-
-        <div class="stats-grid">
-            <div class="glass-card stat-card">
-                <div class="stat-value" style="color: var(--tertiary);" id="count-na-rede">0</div>
-                <div class="stat-label">Impressoras Na Rede</div>
-            </div>
-            <div class="glass-card stat-card secondary">
-                <div class="stat-value" style="color: var(--neutral);">8</div>
-                <div class="stat-label">Switches Mapeados</div>
-            </div>
-            <div class="glass-card stat-card alert">
-                <div class="stat-value" style="color: var(--primary);" id="count-reserva">0</div>
-                <div class="stat-label">Ativos em Reserva</div>
-            </div>
+            <h1>Inventário de Impressoras</h1>
+            <button class="btn-primary" onclick="openModal()">+ Novo Mapeamento</button>
         </div>
 
         <div class="assets-header">
-            <h2>Inventário de Impressoras</h2>
             <input type="text" class="search-bar" id="searchInput"
-                placeholder="Pesquisar por IP, Hostname, Modelo ou Serial..." onkeyup="filterCards()">
+                placeholder="Pesquisar por IP, Hostname, Modelo ou Serial..." onkeyup="filterCards()" style="width: 100%; max-width: 600px;">
         </div>
 
-        <div class="printers-grid" id="printersGrid">
-            <!-- Cards preenchidos via JavaScript -->
-        </div>
+        <!-- Grid exclusivo para as impressoras -->
+        <div class="printers-grid" id="printersGrid"></div>
     </div>
 
-    <!-- Modal Novo Mapeamento -->
+    <!-- MODAL DE CADASTRO MANTIDO IGUAL -->
     <div class="modal-overlay" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -123,7 +92,4 @@
         </div>
     </div>
 </body>
-
-</html>
-
 </html>
