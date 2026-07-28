@@ -6,70 +6,106 @@ async function carregarConexoes() {
     try {
         const response = await fetch('http://localhost:8000/api/conexoes');
         if (!response.ok) throw new Error("Erro de comunicação HTTP");
-        
+
         dadosConexoes = await response.json();
-        renderCards(dadosConexoes);
+        
+        // Renderiza o Switch e o Patch Panel
+        renderizarEquipamentos(dadosConexoes);
     } catch (error) {
         console.error("Erro ao buscar conexões:", error);
     }
 }
 
-// 2. Monta os cards na tela
-function renderCards(data) {
-    const grid = document.getElementById('switchesGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
+// 2. Renderiza as portas do Switch e do Patch Panel
+function renderizarEquipamentos(dadosDoBanco) {
+    const painelSwitch = document.getElementById('switchPortsPanel');
+    const painelPP = document.getElementById('patchPanelPorts');
 
-    data.forEach(item => {
-        let badgeClass = item.StatusPorta === 'Ativo' ? 'badge-ok' : 'badge-alert';
+    if (!painelSwitch || !painelPP) return;
+
+    painelSwitch.innerHTML = '';
+    painelPP.innerHTML = '';
+
+    // Variável para guardar quais portas do Patch Panel 1 estão em uso
+    let portasPPOcupadas = {};
+
+    // ==========================================
+    // A. DESENHANDO O SWITCH (24 Portas)
+    // ==========================================
+    for (let i = 1; i <= 24; i++) {
+        // Busca se existe algo conectado nesta porta do switch
+        const conexao = dadosDoBanco.find(item => item.PortaSwitch === i);
+
+        let ledClass = '';
+        let tooltipTexto = `Porta ${i} Livre`;
+
+        if (conexao) {
+            ledClass = conexao.StatusPorta === 'Ativo' ? 'active' : 'warning';
+            
+            // Monta o texto que aparece ao passar o mouse
+            if (conexao.PatchPanel && conexao.PortaPatchPanel) {
+                tooltipTexto = `Porta ${i} -> ${conexao.DispositivoConectado} (Via PP ${conexao.PatchPanel}, PT ${conexao.PortaPatchPanel})`;
+                
+                // Salva que essa porta do PP está sendo usada para acendermos ela depois!
+                if (conexao.PatchPanel === 1) { // Assumindo que o PP desenhado é o PP 1
+                    portasPPOcupadas[conexao.PortaPatchPanel] = true;
+                }
+            } else {
+                tooltipTexto = `Porta ${i} -> ${conexao.DispositivoConectado} (Conexão Direta)`;
+            }
+        }
+
+        const portDiv = document.createElement('div');
+        portDiv.className = 'rj45-port';
+        portDiv.title = tooltipTexto; // Etiqueta nativa ao passar o mouse
         
-        // Formata a exibição do Patch Panel (mostra "N/A" se for nulo)
-        let ppDisplay = item.PatchPanel ? `PP ${item.PatchPanel} / PT ${item.PortaPatchPanel}` : 'Conexão Direta';
+        // Clique para editar ou criar
+        portDiv.onclick = () => {
+            if (conexao) {
+                abrirEdicao(conexao.IdConexao);
+            } else {
+                openModal();
+                document.getElementById('formSwitchPort').value = i;
+            }
+        };
 
-        const card = document.createElement('div');
-        card.className = 'switch-card';
-        card.innerHTML = `
-            <div class="switch-header">
-                <div class="switch-title">${item.NomeSwitch}</div>
-                <div class="badge ${badgeClass}">${item.StatusPorta}</div>
-            </div>
-            <div class="switch-body">
-                <div class="info-row">
-                    <div class="info-label">Porta Switch</div>
-                    <div class="info-value">Porta ${item.PortaSwitch}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Patch Panel</div>
-                    <div class="info-value">${ppDisplay}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Dispositivo</div>
-                    <div class="info-value" style="font-weight: bold; color: var(--tertiary);">${item.DispositivoConectado}</div>
-                </div>
-            </div>
-            <div class="switch-footer">
-                <button class="btn-edit" onclick="abrirEdicao(${item.IdConexao})">Editar Conexão</button>
-            </div>
+        portDiv.innerHTML = `
+            <div class="led ${ledClass}"></div>
+            <div class="port-number">${i}</div>
         `;
-        grid.appendChild(card);
-    });
+
+        painelSwitch.appendChild(portDiv);
+    }
+
+    // ==========================================
+    // B. DESENHANDO O PATCH PANEL (24 Portas)
+    // ==========================================
+    for (let i = 1; i <= 24; i++) {
+        // Verifica se essa porta do PP foi marcada como ocupada no loop do Switch
+        const estaOcupada = portasPPOcupadas[i];
+
+        const portDiv = document.createElement('div');
+        portDiv.className = 'rj45-port';
+        portDiv.style.cursor = 'default'; // Remove a mãozinha (edição é feita pelo switch)
+        
+        portDiv.title = estaOcupada ? `Porta ${i} em uso pelo Switch` : `Porta ${i} Livre`;
+
+        // Se estiver ocupada, acende um LED Azul escuro/Ciano simulando conexão física
+        const estiloLedPP = estaOcupada ? 'background: #00638D; box-shadow: 0 0 8px #00638D;' : '';
+
+        portDiv.innerHTML = `
+            <div class="led" style="${estiloLedPP}"></div>
+            <div class="port-number">${i}</div>
+        `;
+
+        painelPP.appendChild(portDiv);
+    }
 }
 
-// 3. Filtro de pesquisa
-function filterCards() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    
-    const filteredData = dadosConexoes.filter(item =>
-        item.NomeSwitch.toLowerCase().includes(query) ||
-        item.DispositivoConectado.toLowerCase().includes(query) ||
-        item.PortaSwitch.toString().includes(query)
-    );
-    renderCards(filteredData);
-}
-
-// 4. Modal 
+// 3. Controles do Modal
 function openModal() {
     document.getElementById('addModal').classList.add('active');
+    document.getElementById('btnExcluir').style.display = 'none';
     conexaoEditandoId = null;
     document.querySelector('.modal-header h3').innerText = 'Mapear Nova Porta';
 }
@@ -93,14 +129,14 @@ function abrirEdicao(id) {
 
     conexaoEditandoId = id;
     document.querySelector('.modal-header h3').innerText = 'Editar Conexão';
+    document.getElementById('btnExcluir').style.display = 'inline-block';
     document.getElementById('addModal').classList.add('active');
 }
 
-// 5. Salvar/Atualizar no Banco
+// 4. Salvar/Atualizar no Banco
 async function saveEquipamento(event) {
     event.preventDefault();
 
-    // Captura os valores e converte para número onde necessário
     const ppValue = document.getElementById('formPatchPanel').value;
     const ptValue = document.getElementById('formPatchPort').value;
 
@@ -130,17 +166,37 @@ async function saveEquipamento(event) {
 
         if (response.ok) {
             closeModal();
-            carregarConexoes();
-            alert(conexaoEditandoId !== null ? 'Conexão atualizada com sucesso!' : 'Conexão mapeada com sucesso!');
+            carregarConexoes(); // Recarrega o rack inteiro
         } else {
             const erro = await response.json();
             alert('Erro ao salvar no banco: ' + erro.detail);
         }
     } catch (error) {
         console.error("Erro na requisição:", error);
-        alert('Erro de comunicação com o servidor.');
     }
 }
 
-// Inicia
+// 5. Excluir Conexão
+async function excluirConexao() {
+    if (conexaoEditandoId === null) return;
+    const confirmacao = confirm("Deseja realmente excluir este mapeamento de porta?");
+    if (!confirmacao) return;
+
+    try {
+        const response = await fetch(`http://localhost:8000/api/conexoes/${conexaoEditandoId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            closeModal();
+            carregarConexoes();
+        } else {
+            const erro = await response.json();
+            alert('Erro ao excluir: ' + erro.detail);
+        }
+    } catch (error) {
+        console.error("Erro na exclusão:", error);
+    }
+}
+
 window.onload = () => carregarConexoes();

@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Infra - Switches e Portas</title>
-    
+
     <link rel="stylesheet" href="/styles/switches.css">
-    <!-- O script de switches será criado posteriormente, deixei a tag pronta -->
     <script src="/script/switches.js" defer></script>
 
     <!-- Ícones -->
     <link rel="icon" href="/img/icon/favicon.ico" type="image/x-icon">
 </head>
+
 <body>
     <div class="sidebar">
         <div class="logo">
-            <img src="/img/fotos/logo.png" alt="Logo Portal Infra" style="width: 40px; height: auto; margin-right: 10px;">
+            <img src="/img/fotos/logo.png" alt="Logo Portal Infra"
+                style="width: 40px; height: auto; margin-right: 10px;">
             Portal Infra Honcord
         </div>
-        
+
         <a href="/pages/index.html" class="nav-item">Dashboard</a>
         <a href="/pages/impressoras.html" class="nav-item">Ativos (Impressoras)</a>
         <a href="/pages/switches.html" class="nav-item active">Switches & Portas</a>
@@ -32,13 +34,37 @@
             <button class="btn-primary" onclick="openModal()">+ Nova Conexão</button>
         </div>
 
-        <div class="assets-header">
-            <input type="text" class="search-bar" id="searchInput"
-                placeholder="Pesquisar por Switch, Porta, Patch Panel ou Dispositivo..." onkeyup="filterCards()" style="width: 100%; max-width: 600px;">
-        </div>
+        <!-- Grid exclusivo para os switches (Rack Virtual) -->
+        <div class="rack-container">
+            <div class="rack-unit">
+                <div class="ru-label">01 U</div>
 
-        <!-- Grid exclusivo para os switches (Inicia vazio) -->
-        <div class="switches-grid" id="switchesGrid"></div>
+                <!-- O Equipamento Físico -->
+                <div class="hardware-switch">
+                    <div class="hardware-header">
+                        <span class="hw-brand">USW-LOTE</span>
+                    </div>
+
+                    <!-- Grid de 24 Portas -->
+                    <div class="ports-panel" id="switchPortsPanel">
+                        <!-- As portas serão injetadas aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patch Panel Físico -->
+            <div class="rack-unit">
+                <div class="ru-label">02 U</div>
+                <div class="hardware-switch patch-panel">
+                    <div class="hardware-header">
+                        <span class="hw-model">Patch Panel 24 Portas</span>
+                    </div>
+                    <div class="ports-panel" id="patchPanelPorts">
+                        <!-- As portas do PP podem ser injetadas aqui futuramente -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL DE CADASTRO ADAPTADO PARA SWITCHES -->
@@ -49,7 +75,7 @@
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <form id="addForm" onsubmit="saveEquipamento(event)">
-                
+
                 <div style="display: flex; gap: 15px;">
                     <div class="form-group" style="flex: 2;">
                         <label>Nome do Switch</label>
@@ -60,7 +86,7 @@
                         <input type="number" id="formSwitchPort" required placeholder="Ex: 24">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label>Dispositivo Conectado</label>
                     <input type="text" id="formConnectedDevice" required placeholder="Ex: Imp-Faturamento ou PC 05">
@@ -86,6 +112,11 @@
                 </div>
 
                 <div class="modal-footer">
+                    <!-- Botão de Excluir adicionado e oculto por padrão -->
+                    <button type="button" class="btn-outline" id="btnExcluir"
+                        style="display: none; border-color: var(--primary); color: var(--primary);"
+                        onclick="excluirConexao()">Excluir</button>
+
                     <button type="button" class="btn-outline" onclick="closeModal()">Cancelar</button>
                     <button type="submit" class="btn-primary">Salvar no Banco</button>
                 </div>
@@ -93,4 +124,5 @@
         </div>
     </div>
 </body>
+
 </html>
