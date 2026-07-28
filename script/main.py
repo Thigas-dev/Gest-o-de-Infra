@@ -186,3 +186,74 @@ def atualizar_impressora(impressora_id: int, impressora: ImpressoraCreate, db: S
         "Serial": db_impressora.NumeroSerial,
         "Status": db_impressora.StatusAtivo
     }
+
+# ---------------------------------------------------------
+# MODELOS PARA SWITCHES/CONEXÕES
+# ---------------------------------------------------------
+class ConexaoDB(Base):
+    __tablename__ = "ConexoesRede"
+    IdConexao = Column(Integer, primary_key=True, index=True)
+    NomeSwitch = Column(String(100), nullable=False)
+    PortaSwitch = Column(Integer, nullable=False)
+    DispositivoConectado = Column(String(150), nullable=False)
+    PatchPanel = Column(Integer, nullable=True)
+    PortaPatchPanel = Column(Integer, nullable=True)
+    StatusPorta = Column(String(50), default='Ativo')
+
+class ConexaoSchema(BaseModel):
+    NomeSwitch: str
+    PortaSwitch: int
+    DispositivoConectado: str
+    PatchPanel: int | None = None
+    PortaPatchPanel: int | None = None
+    StatusPorta: str
+
+class ConexaoResponse(ConexaoSchema):
+    IdConexao: int
+    class Config:
+        orm_mode = True
+
+# ---------------------------------------------------------
+# ROTAS PARA SWITCHES/CONEXÕES
+# ---------------------------------------------------------
+@app.get("/api/conexoes", response_model=list[ConexaoResponse])
+def listar_conexoes(db: Session = Depends(get_db)):
+    """Retorna todas as conexões mapeadas."""
+    return db.query(ConexaoDB).all()
+
+@app.post("/api/conexoes", response_model=ConexaoResponse)
+def adicionar_conexao(conexao: ConexaoSchema, db: Session = Depends(get_db)):
+    """Cadastra um novo mapeamento de rede."""
+    nova_conexao = ConexaoDB(**conexao.dict())
+    db.add(nova_conexao)
+    db.commit()
+    db.refresh(nova_conexao)
+    return nova_conexao
+
+@app.put("/api/conexoes/{conexao_id}", response_model=ConexaoResponse)
+def atualizar_conexao(conexao_id: int, conexao: ConexaoSchema, db: Session = Depends(get_db)):
+    """Atualiza um mapeamento existente."""
+    db_conexao = db.query(ConexaoDB).filter(ConexaoDB.IdConexao == conexao_id).first()
+    if not db_conexao:
+        raise HTTPException(status_code=404, detail="Conexão não encontrada.")
+
+    for var, value in vars(conexao).items():
+        setattr(db_conexao, var, value) if value is not None else None
+
+    db.commit()
+    db.refresh(db_conexao)
+    return db_conexao
+
+@app.delete("/api/impressoras/{impressora_id}")
+def deletar_impressora(impressora_id: int, db: Session = Depends(get_db)):
+    """Busca a impressora pelo ID e a remove do banco de dados."""
+    
+    db_impressora = db.query(ImpressoraDB).filter(ImpressoraDB.IdImpressora == impressora_id).first()
+    
+    if not db_impressora:
+        raise HTTPException(status_code=404, detail="Impressora não encontrada.")
+
+    db.delete(db_impressora)
+    db.commit()
+    
+    return {"mensagem": "Equipamento excluído com sucesso!"}

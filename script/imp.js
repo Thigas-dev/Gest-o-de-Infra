@@ -6,7 +6,7 @@ async function carregarImpressorasDoBanco() {
     try {
         const response = await fetch('http://localhost:8000/api/impressoras');
         if (!response.ok) throw new Error("Erro ao buscar dados");
-        
+
         dadosImpressoras = await response.json();
         renderCards(dadosImpressoras);
     } catch (error) {
@@ -49,7 +49,8 @@ function renderCards(data) {
                     <div class="info-value">${item.Marca}</div>
                 </div>
             </div>
-            <div class="printer-footer">
+            <div class="printer-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn-outline" style="border-color: var(--primary); color: var(--primary);" onclick="excluirImpressora(${item.ID})">Excluir</button>
                 <button class="btn-edit" onclick="abrirEdicao(${item.ID})">Editar Ativo</button>
             </div>
         `;
@@ -145,3 +146,27 @@ async function saveEquipamento(event) {
 
 // Carrega tudo ao abrir a página
 window.onload = () => carregarImpressorasDoBanco();
+
+async function excluirImpressora(id) {
+    // Alerta de segurança nativo do navegador
+    const confirmacao = confirm("Tem certeza que deseja remover este equipamento da rede? Esta ação não pode ser desfeita.");
+
+    if (!confirmacao) return; // Se o usuário cancelar, nada acontece
+
+    try {
+        const response = await fetch(`http://localhost:8000/api/impressoras/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            // Recarrega a lista do banco automaticamente para sumir com o card
+            carregarImpressorasDoBanco();
+        } else {
+            const erro = await response.json();
+            alert('Erro ao excluir: ' + erro.detail);
+        }
+    } catch (error) {
+        console.error("Erro na requisição de exclusão:", error);
+        alert('Erro de comunicação com o servidor.');
+    }
+}
