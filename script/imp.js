@@ -1,101 +1,147 @@
-// Dados simulados baseados na planilha (Prontos para serem substituídos via SQL futuramente)
-let dadosImpressoras = [
-    { id: 1, host: "Imp-AdmBS", ip: "10.0.2.18", modelo: "DCP-L5652DN", marca: "BROTHER", serial: "U64198L7N608948", status: "Na Rede" },
-    { id: 2, host: "Imp-AdmEnfermagem", ip: "10.0.2.9", modelo: "DCP-L5652DN", marca: "BROTHER", serial: "U64198L9N303969", status: "Na Rede" },
-    { id: 3, host: "Imp-Cons01", ip: "10.0.2.3", modelo: "ES5112", marca: "OKI", serial: "AK7B026659", status: "Na Rede" },
-    { id: 4, host: "RESERVA", ip: "0.0.0.0", modelo: "ES5112", marca: "OKI", serial: "AK98018324", status: "Reserva" },
-    { id: 5, host: "Scanner-Faturamento", ip: "10.0.2.24", modelo: "ADS-2800W", marca: "BROTHER", serial: "U64278K9G322527", status: "Na Rede" },
-    { id: 6, host: "Imp-Triagem-01", ip: "10.0.2.19", modelo: "ES5112", marca: "OKI", serial: "AK8B038135", status: "Na Rede" }
-];
+let dadosImpressoras = [];
+let impressoraEditandoId = null;
 
-// Função que monta o HTML de cada card
+// 1. Busca os dados reais do SQL Server via Python
+async function carregarImpressorasDoBanco() {
+    try {
+        const response = await fetch('http://localhost:8000/api/impressoras');
+        if (!response.ok) throw new Error("Erro ao buscar dados");
+        
+        dadosImpressoras = await response.json();
+        renderCards(dadosImpressoras);
+    } catch (error) {
+        console.error("Erro na comunicação com a API:", error);
+        document.getElementById('printersGrid').innerHTML = '<p style="color: red;">Erro ao carregar impressoras do banco.</p>';
+    }
+}
+
+// 2. Renderiza os cards na tela
 function renderCards(data) {
     const grid = document.getElementById('printersGrid');
-    
-    // Limpa o grid antes de montar os novos cards
+    if (!grid) return;
     grid.innerHTML = '';
 
     data.forEach(item => {
-        let badgeClass = item.status === 'Na Rede' ? 'badge-ok' : 'badge-alert';
+        let badgeClass = item.Status === 'Na Rede' ? 'badge-ok' : 'badge-alert';
 
         const card = document.createElement('div');
         card.className = 'printer-card';
         card.innerHTML = `
             <div class="printer-header">
-                <div class="printer-title">${item.host}</div>
-                <div class="badge ${badgeClass}">${item.status}</div>
+                <div class="printer-title">${item.Hostname}</div>
+                <div class="badge ${badgeClass}">${item.Status}</div>
             </div>
             <div class="printer-body">
                 <div class="info-row">
                     <div class="info-label">IP</div>
-                    <div class="info-value">${item.ip}</div>
+                    <div class="info-value">${item.IP}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Serial</div>
-                    <div class="info-value">${item.serial}</div>
+                    <div class="info-value">${item.Serial}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Modelo</div>
-                    <div class="info-value">${item.modelo}</div>
+                    <div class="info-value">${item.Modelo}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Marca</div>
-                    <div class="info-value">${item.marca}</div>
+                    <div class="info-value">${item.Marca}</div>
                 </div>
             </div>
             <div class="printer-footer">
-                <button class="btn-edit">Editar Ativo</button>
+                <button class="btn-edit" onclick="abrirEdicao(${item.ID})">Editar Ativo</button>
             </div>
         `;
         grid.appendChild(card);
     });
 }
 
-// Filtro de pesquisa em tempo real
+// 3. Filtro de pesquisa
 function filterCards() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    
+    const searchInput = document.getElementById('searchInput');
+    if (!searchInput) return;
+
+    const query = searchInput.value.toLowerCase();
     const filteredData = dadosImpressoras.filter(item =>
-        item.host.toLowerCase().includes(query) ||
-        item.ip.toLowerCase().includes(query) ||
-        item.modelo.toLowerCase().includes(query) ||
-        item.serial.toLowerCase().includes(query)
+        (item.Hostname && item.Hostname.toLowerCase().includes(query)) ||
+        (item.IP && item.IP.toLowerCase().includes(query)) ||
+        (item.Modelo && item.Modelo.toLowerCase().includes(query)) ||
+        (item.Serial && item.Serial.toLowerCase().includes(query))
     );
-    
     renderCards(filteredData);
 }
 
-// Controles do Modal de Cadastro
+// 4. Modal de Cadastro e Edição
 function openModal() {
     document.getElementById('addModal').classList.add('active');
+    impressoraEditandoId = null;
+    document.querySelector('.modal-header h3').innerText = 'Adicionar Equipamento';
 }
 
 function closeModal() {
     document.getElementById('addModal').classList.remove('active');
     document.getElementById('addForm').reset();
+    impressoraEditandoId = null;
 }
 
-function saveEquipamento(event) {
+function abrirEdicao(id) {
+    const impressora = dadosImpressoras.find(item => item.ID === id);
+    if (!impressora) return;
+
+    document.getElementById('formHost').value = impressora.Hostname;
+    document.getElementById('formIp').value = impressora.IP;
+    document.getElementById('formModelo').value = impressora.Modelo;
+    document.getElementById('formMarca').value = impressora.Marca;
+    document.getElementById('formSerial').value = impressora.Serial;
+    document.getElementById('formStatus').value = impressora.Status;
+
+    impressoraEditandoId = id;
+    document.querySelector('.modal-header h3').innerText = 'Editar Equipamento';
+    document.getElementById('addModal').classList.add('active');
+}
+
+// 5. Salvar (POST) ou Atualizar (PUT) no SQL Server
+async function saveEquipamento(event) {
     event.preventDefault();
 
-    // Captura os valores do formulário
-    const novoItem = {
-        id: dadosImpressoras.length + 1,
-        host: document.getElementById('formHost').value,
-        ip: document.getElementById('formIp').value,
-        modelo: document.getElementById('formModelo').value,
-        marca: document.getElementById('formMarca').value,
-        serial: document.getElementById('formSerial').value,
-        status: document.getElementById('formStatus').value
+    const dadosFormulario = {
+        Hostname: document.getElementById('formHost').value,
+        IP: document.getElementById('formIp').value,
+        Modelo: document.getElementById('formModelo').value,
+        Marca: document.getElementById('formMarca').value,
+        Serial: document.getElementById('formSerial').value,
+        Status: document.getElementById('formStatus').value
     };
 
-    // Adiciona ao array e atualiza a tela
-    dadosImpressoras.push(novoItem);
-    renderCards(dadosImpressoras);
-    
-    closeModal();
-    setTimeout(() => alert('Registro preparado para inserção no Banco de Dados!'), 100);
+    try {
+        let url = 'http://localhost:8000/api/impressoras';
+        let metodo = 'POST';
+
+        if (impressoraEditandoId !== null) {
+            url = `http://localhost:8000/api/impressoras/${impressoraEditandoId}`;
+            metodo = 'PUT';
+        }
+
+        const response = await fetch(url, {
+            method: metodo,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dadosFormulario)
+        });
+
+        if (response.ok) {
+            closeModal();
+            carregarImpressorasDoBanco();
+            alert(impressoraEditandoId !== null ? 'Equipamento atualizado com sucesso!' : 'Equipamento adicionado com sucesso!');
+        } else {
+            const erro = await response.json();
+            alert('Erro ao salvar no banco: ' + erro.detail);
+        }
+    } catch (error) {
+        console.error("Erro na requisição:", error);
+        alert('Erro de comunicação com o servidor.');
+    }
 }
 
-// Quando a página terminar de carregar, renderiza os dados iniciais
-window.onload = () => renderCards(dadosImpressoras);
+// Carrega tudo ao abrir a página
+window.onload = () => carregarImpressorasDoBanco();

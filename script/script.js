@@ -1,63 +1,28 @@
-// Dados simulados baseados na planilha real
-let dadosImpressoras = [
-    { id: 1, host: "Imp-AdmBS", ip: "10.0.2.18", modelo: "DCP-L5652DN", marca: "BROTHER", serial: "U64198L7N608948", status: "Na Rede" },
-    { id: 2, host: "Imp-AdmEnfermagem", ip: "10.0.2.9", modelo: "DCP-L5652DN", marca: "BROTHER", serial: "U64198L9N303969", status: "Na Rede" },
-    { id: 3, host: "Imp-Cons01", ip: "10.0.2.3", modelo: "ES5112", marca: "OKI", serial: "AK7B026659", status: "Na Rede" },
-    { id: 4, host: "RESERVA", ip: "0.0.0.0", modelo: "ES5112", marca: "OKI", serial: "AK98018324", status: "Reserva" },
-    { id: 5, host: "Scanner-Faturamento", ip: "10.0.2.24", modelo: "ADS-2800W", marca: "BROTHER", serial: "U64278K9G322527", status: "Na Rede" },
-    { id: 6, host: "Imp-Triagem-01", ip: "10.0.2.19", modelo: "ES5112", marca: "OKI", serial: "AK8B038135", status: "Na Rede" }
-];
+// 1. Busca os dados da API Python e distribui na tela
+async function carregarDashboard() {
+    try {
+        const response = await fetch('http://localhost:8000/api/impressoras');
+        if (!response.ok) throw new Error("Erro de comunicação HTTP");
+        
+        const dadosImpressoras = await response.json();
+        
+        atualizarEstatisticas(dadosImpressoras);
+        renderizarGraficos(dadosImpressoras);
+    } catch (error) {
+        console.error("Erro ao carregar o dashboard:", error);
+    }
+}
 
-function renderCards(data) {
-    const grid = document.getElementById('printersGrid');
-    
-    // Verifica se o grid existe na página (para evitar erros se o script rodar em uma página sem ele)
-    if (!grid) return;
-    
-    grid.innerHTML = '';
-
+// 2. Atualiza os cards coloridos lá do topo
+function atualizarEstatisticas(dados) {
     let countNaRede = 0;
     let countReserva = 0;
 
-    data.forEach(item => {
-        let badgeClass = item.status === 'Na Rede' ? 'badge-ok' : 'badge-alert';
-
-        if (item.status === 'Na Rede') countNaRede++;
-        if (item.status === 'Reserva') countReserva++;
-
-        const card = document.createElement('div');
-        card.className = 'printer-card';
-        card.innerHTML = `
-            <div class="printer-header">
-                <div class="printer-title">${item.host}</div>
-                <div class="badge ${badgeClass}">${item.status}</div>
-            </div>
-            <div class="printer-body">
-                <div class="info-row">
-                    <div class="info-label">IP</div>
-                    <div class="info-value">${item.ip}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Serial</div>
-                    <div class="info-value">${item.serial}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Modelo</div>
-                    <div class="info-value">${item.modelo}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Marca</div>
-                    <div class="info-value">${item.marca}</div>
-                </div>
-            </div>
-            <div class="printer-footer">
-                <button class="btn-edit">Editar Impressora</button>
-            </div>
-        `;
-        grid.appendChild(card);
+    dados.forEach(item => {
+        if (item.Status === 'Na Rede') countNaRede++;
+        if (item.Status === 'Reserva') countReserva++;
     });
 
-    // Atualiza os contadores do topo da tela do Dashboard
     const elNaRede = document.getElementById('count-na-rede');
     const elReserva = document.getElementById('count-reserva');
     
@@ -65,19 +30,74 @@ function renderCards(data) {
     if (elReserva) elReserva.innerText = countReserva;
 }
 
-function filterCards() {
-    const searchInput = document.getElementById('searchInput');
-    if (!searchInput) return;
-    
-    const query = searchInput.value.toLowerCase();
-    const filteredData = dadosImpressoras.filter(item =>
-        item.host.toLowerCase().includes(query) ||
-        item.ip.toLowerCase().includes(query) ||
-        item.modelo.toLowerCase().includes(query) ||
-        item.serial.toLowerCase().includes(query)
-    );
-    renderCards(filteredData);
+// 3. Constrói os gráficos da Visão Gerencial
+function renderizarGraficos(dados) {
+    // Conta quantas impressoras de cada marca existem
+    const marcasCount = {};
+    // Conta quantos status diferentes existem
+    const statusCount = {};
+
+    dados.forEach(item => {
+        marcasCount[item.Marca] = (marcasCount[item.Marca] || 0) + 1;
+        statusCount[item.Status] = (statusCount[item.Status] || 0) + 1;
+    });
+
+    // Usa as mesmas cores do seu CSS para manter o padrão visual
+    // Azul (tertiary), Vermelho (primary), Cinza (neutral), e Vermelho Claro (secondary)
+    const coresPadrao = ['#00638D', '#D83F3C', '#887270', '#B85C55'];
+
+    // ----------------------------------------------------
+    // GRÁFICO 1: Distribuição por Fabricante (Doughnut)
+    // ----------------------------------------------------
+    new Chart(document.getElementById('chartMarcas'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(marcasCount),
+            datasets: [{
+                data: Object.values(marcasCount),
+                backgroundColor: coresPadrao,
+                borderWidth: 0 // Remove a borda para ficar melhor no glassmorphism
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%', // Deixa o anel mais fino e elegante
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // ----------------------------------------------------
+    // GRÁFICO 2: Status do Parque (Barras)
+    // ----------------------------------------------------
+    new Chart(document.getElementById('chartStatus'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(statusCount),
+            datasets: [{
+                label: 'Equipamentos',
+                data: Object.values(statusCount),
+                backgroundColor: ['#00638D', '#887270'], // Azul pra Ok, Cinza pra Reserva
+                borderRadius: 8 // Arredonda a ponta da barra
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false } // Esconde a legenda desnecessária
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 } // Não queremos números quebrados (ex: 1.5 impressoras)
+                }
+            }
+        }
+    });
 }
 
-// Inicializa a renderização quando a página carrega
-window.onload = () => renderCards(dadosImpressoras);
+// Inicializa a renderização quando a página abre
+window.onload = () => carregarDashboard();
