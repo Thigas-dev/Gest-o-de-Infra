@@ -31,23 +31,27 @@
     <div class="main-content">
         <div class="header-action">
             <h1>Mapeamento de Switches</h1>
-            <button class="btn-primary" onclick="openModal()">+ Nova Conexão</button>
+            <div>
+                <!-- Novo Botão para Ocultar/Exibir -->
+                <button class="btn-outline" style="margin-right: 15px;" onclick="toggleCabos()">Exibir Cabos</button>
+                <button class="btn-primary" onclick="openModal()">+ Nova Conexão</button>
+            </div>
         </div>
 
         <!-- Grid exclusivo para os switches (Rack Virtual) -->
-        <div class="rack-container">
+        <div class="rack-container" style="position: relative;">
+
+            <!-- CAMADA INVISÍVEL ONDE OS CABOS SERÃO DESENHADOS -->
+            <svg id="camadaCabos"></svg>
+
             <div class="rack-unit">
                 <div class="ru-label">01 U</div>
-
-                <!-- O Equipamento Físico -->
                 <div class="hardware-switch">
                     <div class="hardware-header">
                         <span class="hw-brand">USW-LOTE</span>
                     </div>
-
-                    <!-- Grid de 24 Portas -->
                     <div class="ports-panel" id="switchPortsPanel">
-                        <!-- As portas serão injetadas aqui via JavaScript -->
+                        <!-- Portas via JS -->
                     </div>
                 </div>
             </div>
@@ -57,10 +61,10 @@
                 <div class="ru-label">02 U</div>
                 <div class="hardware-switch patch-panel">
                     <div class="hardware-header">
-                        <span class="hw-model">Patch Panel 24 Portas</span>
+                        <span class="hw-model">Patch Panel 01</span>
                     </div>
                     <div class="ports-panel" id="patchPanelPorts">
-                        <!-- As portas do PP podem ser injetadas aqui futuramente -->
+                        <!-- Portas via JS -->
                     </div>
                 </div>
             </div>
@@ -106,8 +110,9 @@
                 <div class="form-group">
                     <label>Status da Porta</label>
                     <select id="formStatus">
-                        <option value="Ativo">Ativa (Em uso)</option>
-                        <option value="Inativo">Inativa (Livre)</option>
+                        <option value="Ativo">Ativa</option>
+                        <option value="Inativo/Defeito">Inativa/Defeito</option>
+                        <option value="Fibra/Internet">Fibra/Internet</option>
                     </select>
                 </div>
 
@@ -117,7 +122,6 @@
                         style="display: none; border-color: var(--primary); color: var(--primary);"
                         onclick="excluirConexao()">Excluir</button>
 
-                    <button type="button" class="btn-outline" onclick="closeModal()">Cancelar</button>
                     <button type="submit" class="btn-primary">Salvar no Banco</button>
                 </div>
             </form>

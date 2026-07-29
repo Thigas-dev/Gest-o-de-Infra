@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Infra - Relatórios</title>
+
+    <!-- Usando o mesmo CSS principal dos switches para manter o padrão -->
+    <link rel="stylesheet" href="/styles/switches.css">
+    <script src="/script/relatorios.js" defer></script>
+
+    <!-- Ícones -->
+    <link rel="icon" href="/img/icon/favicon.ico" type="image/x-icon">
+    
+    <style>
+        /* Estilos específicos para a tabela de relatórios */
+        .report-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .report-table th, .report-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .report-table th {
+            font-weight: 700;
+            color: var(--tertiary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+        }
+
+        .report-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .btn-export {
+            background-color: #107c41; /* Verde Excel */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background-color: #0b5e31;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/img/fotos/logo.png" alt="Logo Portal Infra"
+                style="width: 40px; height: auto; margin-right: 10px;">
+            Portal Infra Honcord
+        </div>
+
+        <a href="/pages/index.html" class="nav-item">Dashboard</a>
+        <a href="/pages/impressoras.html" class="nav-item">Ativos (Impressoras)</a>
+        <a href="/pages/switches.html" class="nav-item">Switches & Portas</a>
+        <a href="/pages/relatorios.html" class="nav-item active">Relatórios</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header-action">
+            <h1>Relatório Geral de Conexões</h1>
+            <button class="btn-export" onclick="exportarExcel()">Exportar para Excel</button>
+        </div>
+
+        <!-- Filtros Rápidos -->
+        <div class="assets-header" style="gap: 15px;">
+            <input type="text" class="search-bar" id="searchReport" placeholder="Pesquisar por equipamento, switch, porta..." style="flex: 2;" onkeyup="filtrarTabela()">
+            <select class="search-bar" id="filterStatus" style="flex: 1;" onchange="filtrarTabela()">
+                <option value="">Todos os Status</option>
+                <option value="Ativo">Apenas Ativos</option>
+                <option value="Inativo/Defeito">Com Defeito</option>
+                <option value="Fibra/Internet">Links de Fibra</option>
+            </select>
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="report-container">
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Switch</th>
+                        <th>Porta SW</th>
+                        <th>Patch Panel</th>
+                        <th>Porta PP</th>
+                        <th>Dispositivo Conectado</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaRelatorio">
+                    <!-- Linhas injetadas via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

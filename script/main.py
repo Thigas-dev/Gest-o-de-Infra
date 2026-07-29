@@ -257,3 +257,17 @@ def deletar_impressora(impressora_id: int, db: Session = Depends(get_db)):
     db.commit()
     
     return {"mensagem": "Equipamento excluído com sucesso!"}
+
+@app.delete("/api/conexoes/{conexao_id}")
+def deletar_conexao(conexao_id: int, db: Session = Depends(get_db)):
+    """Busca a conexão pelo ID e a remove do banco de dados."""
+    
+    db_conexao = db.query(ConexaoDB).filter(ConexaoDB.IdConexao == conexao_id).first()
+    
+    if not db_conexao:
+        raise HTTPException(status_code=404, detail="Conexão não encontrada.")
+
+    db.delete(db_conexao)
+    db.commit()
+    
+    return {"mensagem": "Mapeamento excluído com sucesso!"}

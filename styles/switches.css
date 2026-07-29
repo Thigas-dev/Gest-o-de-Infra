@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    --primary: #D83F3C;
+    --primary: #B32325;
     --secondary: #B85C55;
     --tertiary: #00638D;
     --neutral: #887270;
@@ -76,7 +76,7 @@ body {
 /* Conteúdo Principal */
 .main-content {
     flex: 1;
-    padding: 40px 50px;
+    padding: 40px 30px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -219,13 +219,14 @@ body {
 /* Container do Rack */
 .rack-container {
     background: rgba(20, 25, 35, 0.85);
-    /* Fundo escuro imitando a sala de rede */
     border-radius: 12px;
-    padding: 30px 40px;
+    padding: 30px 60px 30px 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    overflow-x: auto;
+    /* Permite rolagem lateral se o switch for muito grande */
 }
 
 .rack-unit {
@@ -247,18 +248,19 @@ body {
     background: linear-gradient(to bottom, #2b313d, #1c2128);
     border: 1px solid #111;
     border-radius: 4px;
-    width: 100%;
-    max-width: 900px;
-    height: 90px;
+    width: max-content;
+    /* O fundo agora acompanha a quantidade de portas */
+    min-width: 100%;
+    min-height: 110px;
+    padding: 20px 30px;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
-    padding: 0 20px;
     position: relative;
 }
 
 .patch-panel {
-    height: 70px;
+    min-height: 100px;
     /* PP geralmente é mais fino visualmente */
     background: linear-gradient(to bottom, #1c2128, #11151a);
 }
@@ -287,8 +289,6 @@ body {
 /* O Grid de Portas (RJ45) */
 .ports-panel {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(2, 1fr);
     gap: 4px 8px;
     /* Espaço entre as portas */
     margin-left: 30px;
@@ -307,6 +307,19 @@ body {
     justify-content: center;
     align-items: flex-end;
     transition: all 0.2s;
+}
+
+/* Controle da Posição dos Números das Portas */
+.rj45-port.top-row .port-number {
+    top: -18px;
+    /* Joga o número para cima da porta */
+    bottom: auto;
+}
+
+.rj45-port.bottom-row .port-number {
+    bottom: -18px;
+    /* Joga o número para baixo da porta */
+    top: auto;
 }
 
 .rj45-port:hover {
@@ -353,7 +366,7 @@ body {
     box-shadow: 0 0 5px #00ff00;
 }
 
-.led.warning {
+.led.fibra{
     background: #ffb700;
     /* Amarelo (Trunk/Reserva) */
     box-shadow: 0 0 5px #ffb700;
@@ -363,4 +376,33 @@ body {
     background: #ff0000;
     /* Vermelho (Erro) */
     box-shadow: 0 0 5px #ff0000;
+}
+
+/* Camada de Cabos SVG */
+#camadaCabos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Permite que você clique nas portas "através" do SVG */
+    z-index: 10;
+}
+
+.cabo-rede {
+    fill: none;
+    stroke-width: 2px;
+    opacity: 0.6;
+    stroke-dasharray: 8 4;
+    /* Cria o efeito pontilhado imitando tráfego de dados */
+    animation: fluxoDados 30s linear infinite;
+    transition: opacity 0.3s ease, stroke-width 0.3s ease;
+}
+
+/* Animação que faz a linha correr */
+@keyframes fluxoDados {
+    to {
+        stroke-dashoffset: 1000;
+    }
 }
