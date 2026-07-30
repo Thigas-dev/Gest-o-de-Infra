@@ -366,7 +366,7 @@ body {
     box-shadow: 0 0 5px #00ff00;
 }
 
-.led.fibra{
+.led.fibra {
     background: #ffb700;
     /* Amarelo (Trunk/Reserva) */
     box-shadow: 0 0 5px #ffb700;
@@ -379,7 +379,7 @@ body {
 }
 
 /* Camada de Cabos SVG */
-#camadaCabos {
+.camada-Cabos {
     position: absolute;
     top: 0;
     left: 0;
@@ -387,7 +387,7 @@ body {
     height: 100%;
     pointer-events: none;
     /* Permite que você clique nas portas "através" do SVG */
-    z-index: 10;a 
+    z-index: 10;
 }
 
 .cabo-rede {
@@ -398,6 +398,57 @@ body {
     /* Cria o efeito pontilhado imitando tráfego de dados */
     animation: fluxoDados 30s linear infinite;
     transition: opacity 0.3s ease, stroke-width 0.3s ease;
+}
+
+/* Sistema de Abas (Filtros de Rack) */
+.tabs-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--glass-border);
+    padding-bottom: 15px;
+}
+
+.tab-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--neutral);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 1px 5px #7c191a;
+}
+
+/* Os containers dos racks agora podem ser escondidos suavemente */
+.rack-wrapper {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Animação que faz a linha correr */

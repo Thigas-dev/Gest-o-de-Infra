@@ -32,101 +32,455 @@
         <div class="header-action">
             <h1>Mapeamento de Switches</h1>
             <div>
-                <!-- Novo Botão para Ocultar/Exibir -->
                 <button class="btn-outline" style="margin-right: 15px;" onclick="toggleCabos()">Exibir Cabos</button>
                 <button class="btn-primary" onclick="openModal()">+ Nova Conexão</button>
             </div>
         </div>
 
-        <!-- Grid exclusivo para os switches (Rack Virtual) -->
-        <div class="rack-container" style="position: relative;">
+        <!-- ========================================== -->
+        <!-- MENU DE ABAS (FILTRO)                      -->
+        <!-- ========================================== -->
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="filtrarRack('todos', event)">Todos os Racks</button>
+            <button class="tab-btn" onclick="filtrarRack('rack-lote', event)">USW-LOTE</button>
+            <button class="tab-btn" onclick="filtrarRack('rack-oncologia', event)">USW-CENTROONCOLOGIA</button>
+            <button class="tab-btn" onclick="filtrarRack('rack-BS', event)">USW-BANCO DE SANGUE</button>
+            <button class="tab-btn" onclick="filtrarRack('rack-matriz1', event)">USW-MATRIZ 01</button>
+            <button class="tab-btn" onclick="filtrarRack('rack-matriz2', event)">USW-MATRIZ 02</button>
+            <button class="tab-btn" onclick="filtrarRack('rack-admin', event)">USW-ADMINISTRATIVO</button>
+        </div>
 
-            <!-- CAMADA INVISÍVEL ONDE OS CABOS SERÃO DESENHADOS -->
-            <svg id="camadaCabos"></svg>
+        <!-- ========================================== -->
+        <!-- RACK 01: LOTE                              -->
+        <!-- ========================================== -->
+        <div class="rack-wrapper" id="rack-lote">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Lote</h2>
+            <div class="rack-container" style="position: relative; margin-bottom: 40px;">
+                <svg id="camadaCabosLote" class="camada-cabos"></svg>
 
-            <div class="rack-unit">
-                <div class="ru-label">01 U</div>
-                <div class="hardware-switch">
-                    <div class="hardware-header">
-                        <span class="hw-brand">USW-LOTE</span>
+                <div class="rack-unit">
+                    <div class="ru-label">01 U</div>
+                    <div class="hardware-switch">
+                        <div class="hardware-header">
+                            <span class="hw-brand">USW-LOTE</span>
+                        </div>
+                        <div class="ports-panel" id="switchPortsPanel1"></div>
                     </div>
-                    <div class="ports-panel" id="switchPortsPanel">
-                        <!-- Portas via JS -->
+                </div>
+
+                <div class="rack-unit">
+                    <div class="ru-label">02 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel Lote 01</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelPorts1"></div>
                     </div>
                 </div>
             </div>
+            
+        </div>
 
-            <!-- Patch Panel Físico -->
-            <div class="rack-unit">
-                <div class="ru-label">02 U</div>
-                <div class="hardware-switch patch-panel">
-                    <div class="hardware-header">
-                        <span class="hw-model">Patch Panel 01</span>
-                    </div>
-                    <div class="ports-panel" id="patchPanelPorts">
-                        <!-- Portas via JS -->
+        <!-- ========================================== -->
+        <!-- RACK 02: CENTRO DE ONCOLOGIA               -->
+        <!-- ========================================== -->
+        <div class="rack-wrapper" id="rack-oncologia">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Centro de Oncologia
+            </h2>
+            <div class="rack-container" style="position: relative; margin-bottom: 40px;">
+                <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
+
+                <!-- SWITCH DA ONCOLOGIA -->
+                <div class="rack-unit">
+                    <div class="ru-label">01 U</div>
+                    <div class="hardware-switch">
+                        <div class="hardware-header">
+                            <span class="hw-brand">USW-ONCOLOGIA</span>
+
+                        </div>
+                        <div class="ports-panel" id="switchPortsPanel2"></div>
                     </div>
                 </div>
+
+                <!-- NOVO: PATCH PANEL DA ONCOLOGIA -->
+                <div class="rack-unit">
+                    <div class="ru-label">02 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel Oncologia (PP 1)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelOnco1"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DA ONCOLOGIA (PP 2) -->
+                <div class="rack-unit">
+                    <div class="ru-label">03 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel Oncologia (PP 2)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelOnco2"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DA ONCOLOGIA (PP 3) -->
+                <div class="rack-unit">
+                    <div class="ru-label">04 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel Oncologia (PP 3)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelOnco3"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DA ONCOLOGIA (PP 4) -->
+                <div class="rack-unit">
+                    <div class="ru-label">05 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel Oncologia (PP 4)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelOnco4"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
 
-    <!-- MODAL DE CADASTRO ADAPTADO PARA SWITCHES -->
-    <div class="modal-overlay" id="addModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Mapear Nova Porta</h3>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
+        <div class="rack-wrapper" id="rack-BS">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Banco de Sangue
+            </h2>
+            <div class="rack-container" style="position: relative; margin-bottom: 40px;">
+                <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
+
+                <!-- SWITCH DO BANCO DE SANGUE -->
+                <div class="rack-unit">
+                    <div class="ru-label">01 U</div>
+                    <div class="hardware-switch">
+                        <div class="hardware-header">
+                            <span class="hw-brand">USW - Banco de Sangue</span>
+                        </div>
+                        <div class="ports-panel" id="switchPortsPanel3"></div>
+                    </div>
+                </div>
+
+                <!-- NOVO: PATCH PANEL DO BANCO DE SANGUE -->
+                <div class="rack-unit">
+                    <div class="ru-label">02 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel BS (PP 1)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelBS1"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO BANCO DE SANGUE (PP 2) -->
+                <div class="rack-unit">
+                    <div class="ru-label">03 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel BS (PP 2)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelBS2"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO BANCO DE SANGUE (PP 3) -->
+                <div class="rack-unit">
+                    <div class="ru-label">04 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel BS (PP 3)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelBS3"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO BANCO DE SANGUE (PP 4) -->
+                <div class="rack-unit">
+                    <div class="ru-label">05 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel BS (PP 4)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelBS4"></div>
+                    </div>
+                </div>
+
             </div>
-            <form id="addForm" onsubmit="saveEquipamento(event)">
-
-                <div style="display: flex; gap: 15px;">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Nome do Switch</label>
-                        <input type="text" id="formSwitchName" required placeholder="Ex: MATRIZ-01">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Porta (Switch)</label>
-                        <input type="number" id="formSwitchPort" required placeholder="Ex: 24">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Dispositivo Conectado</label>
-                    <input type="text" id="formConnectedDevice" required placeholder="Ex: Imp-Faturamento ou PC 05">
-                </div>
-
-                <div style="display: flex; gap: 15px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Patch Panel (PP)</label>
-                        <input type="number" id="formPatchPanel" placeholder="Ex: 1">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Porta do PP (PT)</label>
-                        <input type="number" id="formPatchPort" placeholder="Ex: 12">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Status da Porta</label>
-                    <select id="formStatus">
-                        <option value="Ativo">Ativa</option>
-                        <option value="Inativo/Defeito">Inativa/Defeito</option>
-                        <option value="Fibra/Internet">Fibra/Internet</option>
-                    </select>
-                </div>
-
-                <div class="modal-footer">
-                    <!-- Botão de Excluir adicionado e oculto por padrão -->
-                    <button type="button" class="btn-outline" id="btnExcluir"
-                        style="display: none; border-color: var(--primary); color: var(--primary);"
-                        onclick="excluirConexao()">Excluir</button>
-
-                    <button type="submit" class="btn-primary">Salvar no Banco</button>
-                </div>
-            </form>
         </div>
-    </div>
+
+        <div class="rack-wrapper" id="rack-matriz1">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Matriz 01
+            </h2>
+            <div class="rack-container" style="position: relative; margin-bottom: 40px;">
+                <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
+
+                <!-- SWITCH DO MATRIZ 01 -->
+                <div class="rack-unit">
+                    <div class="ru-label">01 U</div>
+                    <div class="hardware-switch">
+                        <div class="hardware-header">
+                            <span class="hw-brand">USW - Matriz 01</span>
+                        </div>
+                        <div class="ports-panel" id="switchPortsPanel4"></div>
+                    </div>
+                </div>
+
+                <!-- NOVO: PATCH PANEL DO MATRIZ 01 -->
+                <div class="rack-unit">
+                    <div class="ru-label">02 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ1 (PP 1)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ1"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 01 (PP 2) -->
+                <div class="rack-unit">
+                    <div class="ru-label">03 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ1 (PP 2)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 01 (PP 3) -->
+                <div class="rack-unit">
+                    <div class="ru-label">04 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ1 (PP 3)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ3"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 01 (PP 4) -->
+                <div class="rack-unit">
+                    <div class="ru-label">05 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ1 (PP 4)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ4"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 01 (PP 5) -->
+                <div class="rack-unit">
+                    <div class="ru-label">06 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ1 (PP 5)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ5"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 01 (PP 6) -->
+                <div class="rack-unit">
+                    <div class="ru-label">07 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ1 (PP 6)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ6"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="rack-wrapper" id="rack-matriz2">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Matriz 02
+            </h2>
+            <div class="rack-container" style="position: relative; margin-bottom: 40px;">
+                <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
+
+                <!-- SWITCH DO MATRIZ 02 -->
+                <div class="rack-unit">
+                    <div class="ru-label">01 U</div>
+                    <div class="hardware-switch">
+                        <div class="hardware-header">
+                            <span class="hw-brand">USW - Matriz 02</span>
+                        </div>
+                        <div class="ports-panel" id="switchPortsPanel5"></div>
+                    </div>
+                </div>
+
+                <!-- NOVO: PATCH PANEL DO MATRIZ 02 -->
+                <div class="rack-unit">
+                    <div class="ru-label">02 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ2 (PP 1)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2-1"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 02 (PP 2) -->
+                <div class="rack-unit">
+                    <div class="ru-label">03 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ2 (PP 2)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2-2"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 02 (PP 3) -->
+                <div class="rack-unit">
+                    <div class="ru-label">04 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ2 (PP 3)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2-3"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 02 (PP 4) -->
+                <div class="rack-unit">
+                    <div class="ru-label">05 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ2 (PP 4)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2-4"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 02 (PP 5) -->
+                <div class="rack-unit">
+                    <div class="ru-label">06 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ2 (PP 5)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2-5"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO MATRIZ 02 (PP 6) -->
+                <div class="rack-unit">
+                    <div class="ru-label">07 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel MZ2 (PP 6)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelMZ2-6"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="rack-wrapper" id="rack-admin">
+            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Administrativo</h2>
+            <div class="rack-container" style="position: relative; margin-bottom: 40px;">
+                <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
+
+                <!-- SWITCH DO Administrativo -->
+                <div class="rack-unit">
+                    <div class="ru-label">01 U</div>
+                    <div class="hardware-switch">
+                        <div class="hardware-header">
+                            <span class="hw-brand">USW - Administrativo</span>
+                        </div>
+                        <div class="ports-panel" id="switchPortsPanel6"></div>
+                    </div>
+                </div>
+
+                <!-- NOVO: PATCH PANEL DO ADMINISTRATIVO -->
+                <div class="rack-unit">
+                    <div class="ru-label">02 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel ADM (PP 1)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelADM-1"></div>
+                    </div>
+                </div>
+
+                <!-- PATCH PANEL DO ADMINISTRATIVO (PP 2) -->
+                <div class="rack-unit">
+                    <div class="ru-label">03 U</div>
+                    <div class="hardware-switch patch-panel">
+                        <div class="hardware-header">
+                            <span class="hw-model">Patch Panel ADM (PP 2)</span>
+                        </div>
+                        <div class="ports-panel" id="patchPanelADM-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL DE CADASTRO ADAPTADO PARA SWITCHES -->
+            <div class="modal-overlay" id="addModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Mapear Nova Porta</h3>
+                        <button class="close-btn" onclick="closeModal()">&times;</button>
+                    </div>
+                    <form id="addForm" onsubmit="saveEquipamento(event)">
+
+                        <div style="display: flex; gap: 15px;">
+                            <div class="form-group" style="flex: 2;">
+                                <label>Nome do Switch</label>
+                                <input type="text" id="formSwitchName" required placeholder="Ex: MATRIZ-01">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Porta (Switch)</label>
+                                <input type="number" id="formSwitchPort" required placeholder="Ex: 24">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dispositivo Conectado</label>
+                            <input type="text" id="formConnectedDevice" required
+                                placeholder="Ex: Imp-Faturamento ou PC 05">
+                        </div>
+
+                        <div style="display: flex; gap: 15px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Patch Panel (PP)</label>
+                                <input type="number" id="formPatchPanel" placeholder="Ex: 1">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Porta do PP (PT)</label>
+                                <input type="number" id="formPatchPort" placeholder="Ex: 12">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status da Porta</label>
+                            <select id="formStatus">
+                                <option value="Ativo">Ativa</option>
+                                <option value="Inativo/Defeito">Inativa/Defeito</option>
+                                <option value="Fibra/Internet">Fibra/Internet</option>
+                            </select>
+                        </div>
+
+                        <div class="modal-footer">
+                            <!-- Botão de Excluir adicionado e oculto por padrão -->
+                            <button type="button" class="btn-outline" id="btnExcluir"
+                                style="display: none; border-color: var(--primary); color: var(--primary);"
+                                onclick="excluirConexao()">Excluir</button>
+
+                            <button type="submit" class="btn-primary">Salvar no Banco</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 </body>
 
 </html>
