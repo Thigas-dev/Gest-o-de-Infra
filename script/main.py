@@ -199,6 +199,8 @@ class ConexaoDB(Base):
     PatchPanel = Column(Integer, nullable=True)
     PortaPatchPanel = Column(Integer, nullable=True)
     StatusPorta = Column(String(50), default='Ativo')
+    IP = Column(String(50), nullable=True)
+    Local = Column(String(100), nullable=True)
 
 class ConexaoSchema(BaseModel):
     NomeSwitch: str
@@ -207,6 +209,8 @@ class ConexaoSchema(BaseModel):
     PatchPanel: int | None = None
     PortaPatchPanel: int | None = None
     StatusPorta: str
+    IP: str | None = None
+    Local: str | None = None
 
 class ConexaoResponse(ConexaoSchema):
     IdConexao: int
@@ -238,7 +242,7 @@ def atualizar_conexao(conexao_id: int, conexao: ConexaoSchema, db: Session = Dep
         raise HTTPException(status_code=404, detail="Conexão não encontrada.")
 
     for var, value in vars(conexao).items():
-        setattr(db_conexao, var, value) if value is not None else None
+        setattr(db_conexao, var, value)
 
     db.commit()
     db.refresh(db_conexao)

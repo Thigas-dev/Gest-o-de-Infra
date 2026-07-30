@@ -457,3 +457,48 @@ body {
         stroke-dashoffset: 1000;
     }
 }
+
+/* ========================================================
+   TABELAS DE RELATÓRIO (ABAIXO DOS RACKS)
+======================================================== */
+.rack-table-container {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 350px;
+    overflow-y: auto;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.rack-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.rack-table th {
+    text-align: left;
+    padding: 12px 10px;
+    color: var(--tertiary);
+    border-bottom: 2px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    background: rgba(245, 247, 250, 0.95);
+    /* Fundo sólido leve para o cabeçalho não bugar ao rolar */
+    backdrop-filter: blur(5px);
+    z-index: 2;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.rack-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--neutral);
+}
+
+.rack-table tr:hover {
+    background: rgba(0, 99, 141, 0.05);
+}

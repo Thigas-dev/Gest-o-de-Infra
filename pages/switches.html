@@ -54,7 +54,11 @@
         <!-- RACK 01: LOTE                              -->
         <!-- ========================================== -->
         <div class="rack-wrapper" id="rack-lote">
-            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Lote</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem; margin: 0;">USW - Lote</h2>
+                <button class="btn-outline" onclick="toggleTabela('container-lote', this)"
+                    style="padding: 5px 15px; font-size: 0.85rem;">Exibir Relatório</button>
+            </div>
             <div class="rack-container" style="position: relative; margin-bottom: 40px;">
                 <svg id="camadaCabosLote" class="camada-cabos"></svg>
 
@@ -78,8 +82,26 @@
                     </div>
                 </div>
             </div>
-            
+            <div class="rack-table-container" id="container-lote" style="display: none;">
+                <table class="rack-table">
+                    <thead>
+                        <tr>
+                            <th>Switch</th>
+                            <th>Porta SW</th>
+                            <th>Patch Panel</th>
+                            <th>Porta PP</th>
+                            <th>Nome Dispositivo</th>
+                            <th>IP</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-USW-LOTE">
+                        <!-- O JavaScript vai injetar os dados aqui -->
+                    </tbody>
+                </table>
+            </div>
         </div>
+
 
         <!-- ========================================== -->
         <!-- RACK 02: CENTRO DE ONCOLOGIA               -->
@@ -448,6 +470,17 @@
                             <label>Dispositivo Conectado</label>
                             <input type="text" id="formConnectedDevice" required
                                 placeholder="Ex: Imp-Faturamento ou PC 05">
+                        </div>
+
+                        <div style="display: flex; gap: 15px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Endereço IP</label>
+                                <input type="text" id="formIP" placeholder="Ex: 10.0.1.50">
+                            </div>
+                            <div class="form-group" style="flex: 2;">
+                                <label>Localização (Sala/Setor)</label>
+                                <input type="text" id="formLocal" placeholder="Ex: Recepção">
+                            </div>
                         </div>
 
                         <div style="display: flex; gap: 15px;">

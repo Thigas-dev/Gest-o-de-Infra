@@ -117,6 +117,7 @@ function renderizarEquipamentos(dadosDoBanco) {
     // RACK 01 - LOTE
     desenharSwitchFisico('switchPortsPanel1', 'USW-LOTE', 52);
     desenharPatchPanel('patchPanelPorts1', 'USW-LOTE', 1);
+    renderizarTabelaRack('table-USW-LOTE', 'USW-LOTE', dadosDoBanco);
 
     // RACK 02 - ONCOLOGIA 
     desenharSwitchFisico('switchPortsPanel2', 'USW-CENTROONCOLOGIA', 52);
@@ -156,6 +157,40 @@ function renderizarEquipamentos(dadosDoBanco) {
     desenharPatchPanel('patchPanelADM-2', 'USW-ADMINISTRATIVO', 2);
 
     setTimeout(desenharCabos, 100);
+}
+
+// ========================================================
+// RENDERIZAR TABELA DE RELATÓRIO DO RACK
+// ========================================================
+function renderizarTabelaRack(idTbody, nomeSwitch, dadosDoBanco) {
+    const tbody = document.getElementById(idTbody);
+    if (!tbody) return; // Se não achar o Tbody, ele ignora sem dar erro na tela inteira
+
+    tbody.innerHTML = '';
+
+    const conexoes = dadosDoBanco
+        .filter(item => item.NomeSwitch === nomeSwitch)
+        .sort((a, b) => a.PortaSwitch - b.PortaSwitch);
+
+    conexoes.forEach(conexao => {
+        const tr = document.createElement('tr');
+
+        const pp = conexao.PatchPanel ? `PP ${conexao.PatchPanel}` : '-';
+        const pt = conexao.PortaPatchPanel || '-';
+        const ip = conexao.IP || '-';
+        const local = conexao.Local || '-';
+
+        tr.innerHTML = `
+            <td><strong>${conexao.NomeSwitch}</strong></td>
+            <td>Porta ${conexao.PortaSwitch}</td>
+            <td>${pp}</td>
+            <td>${pt}</td>
+            <td>${conexao.DispositivoConectado}</td>
+            <td>${ip}</td>
+            <td>${local}</td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 // ========================================================
@@ -296,6 +331,8 @@ function abrirEdicao(id) {
     document.getElementById('formSwitchName').value = conexao.NomeSwitch;
     document.getElementById('formSwitchPort').value = conexao.PortaSwitch;
     document.getElementById('formConnectedDevice').value = conexao.DispositivoConectado;
+    document.getElementById('formIP').value = conexao.IP || '';
+    document.getElementById('formLocal').value = conexao.Local || '';
     document.getElementById('formPatchPanel').value = conexao.PatchPanel || '';
     document.getElementById('formPatchPort').value = conexao.PortaPatchPanel || '';
     document.getElementById('formStatus').value = conexao.StatusPorta;
@@ -313,10 +350,14 @@ async function saveEquipamento(event) {
     event.preventDefault();
     const pp = document.getElementById('formPatchPanel').value;
     const pt = document.getElementById('formPatchPort').value;
+    const ip_val = document.getElementById('formIP').value;
+    const local_val = document.getElementById('formLocal').value;
     const form = {
         NomeSwitch: document.getElementById('formSwitchName').value,
         PortaSwitch: parseInt(document.getElementById('formSwitchPort').value),
         DispositivoConectado: document.getElementById('formConnectedDevice').value,
+        IP: document.getElementById('formIP').value || null,
+        Local: document.getElementById('formLocal').value || null,
         PatchPanel: pp ? parseInt(pp) : null,
         PortaPatchPanel: pt ? parseInt(pt) : null,
         StatusPorta: document.getElementById('formStatus').value
@@ -359,4 +400,20 @@ function filtrarRack(idRack, event) {
     });
 
     setTimeout(desenharCabos, 150);
+}
+
+// ========================================================
+// MOSTRAR / OCULTAR TABELAS DE RELATÓRIO
+// ========================================================
+function toggleTabela(idContainer, btn) {
+    const container = document.getElementById(idContainer);
+    if (!container) return;
+
+    if (container.style.display === 'none' || container.style.display === '') {
+        container.style.display = 'block';
+        btn.innerText = 'Ocultar Relatório';
+    } else {
+        container.style.display = 'none';
+        btn.innerText = 'Exibir Relatório';
+    }
 }
