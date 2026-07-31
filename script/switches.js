@@ -125,22 +125,25 @@ function renderizarEquipamentos(dadosDoBanco) {
     desenharPatchPanel('patchPanelOnco2', 'USW-CENTROONCOLOGIA', 2);// Passando 2 aqui porque é o PP 2 da Oncologia
     desenharPatchPanel('patchPanelOnco3', 'USW-CENTROONCOLOGIA', 3);
     desenharPatchPanel('patchPanelOnco4', 'USW-CENTROONCOLOGIA', 4);
+    renderizarTabelaRack('table-USW-CENTROONCOLOGIA', 'USW-CENTROONCOLOGIA', dadosDoBanco);
 
     // RACK 03 - BANCO DE SANGUE
-    desenharSwitchFisico('switchPortsPanel3', 'USW-BANCODESANGUE', 52);
-    desenharPatchPanel('patchPanelBS1', 'USW-BANCODESANGUE', 1);
-    desenharPatchPanel('patchPanelBS2', 'USW-BANCODESANGUE', 2);
-    desenharPatchPanel('patchPanelBS3', 'USW-BANCODESANGUE', 3);
-    desenharPatchPanel('patchPanelBS4', 'USW-BANCODESANGUE', 4);
+    desenharSwitchFisico('switchPortsPanel3', 'USW-BANCO DE SANGUE', 52);
+    desenharPatchPanel('patchPanelBS1', 'USW-BANCO DE SANGUE', 1);
+    desenharPatchPanel('patchPanelBS2', 'USW-BANCO DE SANGUE', 2);
+    desenharPatchPanel('patchPanelBS3', 'USW-BANCO DE SANGUE', 3);
+    desenharPatchPanel('patchPanelBS4', 'USW-BANCO DE SANGUE', 4);
+    renderizarTabelaRack('table-USW-BANCODESANGUE', 'USW-BANCO DE SANGUE', dadosDoBanco);
 
     // RACK 04 - MATRIZ 01
-    desenharSwitchFisico('switchPortsPanel4', 'USW-MATRIZ01', 52);
-    desenharPatchPanel('patchPanelMZ1', 'USW-MATRIZ01', 1);
-    desenharPatchPanel('patchPanelMZ2', 'USW-MATRIZ01', 2);
-    desenharPatchPanel('patchPanelMZ3', 'USW-MATRIZ01', 3);
-    desenharPatchPanel('patchPanelMZ4', 'USW-MATRIZ01', 4);
-    desenharPatchPanel('patchPanelMZ5', 'USW-MATRIZ01', 5);
-    desenharPatchPanel('patchPanelMZ6', 'USW-MATRIZ01', 6);
+    desenharSwitchFisico('switchPortsPanel4', 'USW-MATRIZ 01', 52);
+    desenharPatchPanel('patchPanelMZ1', 'USW-MATRIZ 01', 1);
+    desenharPatchPanel('patchPanelMZ2', 'USW-MATRIZ 01', 2);
+    desenharPatchPanel('patchPanelMZ3', 'USW-MATRIZ 01', 3);
+    desenharPatchPanel('patchPanelMZ4', 'USW-MATRIZ 01', 4);
+    desenharPatchPanel('patchPanelMZ5', 'USW-MATRIZ 01', 5);
+    desenharPatchPanel('patchPanelMZ6', 'USW-MATRIZ 01', 6);
+    renderizarTabelaRack('table-USW-MATRIZ01', 'USW-MATRIZ 01', dadosDoBanco);
 
     // RACK 05 - MATRIZ 02
     desenharSwitchFisico('switchPortsPanel5', 'USW-MATRIZ02', 52);
@@ -150,11 +153,13 @@ function renderizarEquipamentos(dadosDoBanco) {
     desenharPatchPanel('patchPanelMZ2-4', 'USW-MATRIZ02', 4);
     desenharPatchPanel('patchPanelMZ2-5', 'USW-MATRIZ02', 5);
     desenharPatchPanel('patchPanelMZ2-6', 'USW-MATRIZ02', 6);
+    renderizarTabelaRack('table-USW-MATRIZ02', 'USW-MATRIZ02', dadosDoBanco);
 
     // RACK 06 - ADMINISTRATIVO
     desenharSwitchFisico('switchPortsPanel6', 'USW-ADMINISTRATIVO', 52);
     desenharPatchPanel('patchPanelADM-1', 'USW-ADMINISTRATIVO', 1);
     desenharPatchPanel('patchPanelADM-2', 'USW-ADMINISTRATIVO', 2);
+    renderizarTabelaRack('table-USW-ADMINISTRATIVO', 'USW-ADMINISTRATIVO', dadosDoBanco);
 
     setTimeout(desenharCabos, 100);
 }
@@ -415,5 +420,30 @@ function toggleTabela(idContainer, btn) {
     } else {
         container.style.display = 'none';
         btn.innerText = 'Exibir Relatório';
+    }
+}
+
+// ========================================================
+// FILTRO DE PESQUISA INDIVIDUAL POR RACK
+// ========================================================
+function filtrarTabela(inputId, tbodyId) {
+    const input = document.getElementById(inputId);
+    const filtro = input.value.toLowerCase();
+    const tbody = document.getElementById(tbodyId);
+
+    if (!tbody) return;
+
+    const linhas = tbody.getElementsByTagName('tr');
+
+    for (let i = 0; i < linhas.length; i++) {
+        // Pega todo o texto da linha atual (Dispositivo, IP, Porta, etc)
+        const textoLinha = linhas[i].textContent || linhas[i].innerText;
+
+        // Se o texto digitado existir na linha, mostra. Senão, esconde.
+        if (textoLinha.toLowerCase().indexOf(filtro) > -1) {
+            linhas[i].style.display = "";
+        } else {
+            linhas[i].style.display = "none";
+        }
     }
 }

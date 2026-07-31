@@ -83,6 +83,11 @@
                 </div>
             </div>
             <div class="rack-table-container" id="container-lote" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="search-lote" class="rack-search"
+                        placeholder="Pesquisar IP, Dispositivo, Porta ou Local..."
+                        onkeyup="filtrarTabela('search-lote', 'table-USW-LOTE')">
+                </div>
                 <table class="rack-table">
                     <thead>
                         <tr>
@@ -107,8 +112,11 @@
         <!-- RACK 02: CENTRO DE ONCOLOGIA               -->
         <!-- ========================================== -->
         <div class="rack-wrapper" id="rack-oncologia">
-            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Centro de Oncologia
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem; margin: 0;">USW - Centro de Oncologia</h2>
+                <button class="btn-outline" onclick="toggleTabela('container-onco', this)"
+                    style="padding: 5px 15px; font-size: 0.85rem;">Exibir Relatório</button>
+            </div>
             <div class="rack-container" style="position: relative; margin-bottom: 40px;">
                 <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
 
@@ -169,11 +177,35 @@
                 </div>
 
             </div>
+            <div class="rack-table-container" id="container-onco" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="search-onco" class="rack-search"
+                        placeholder="Pesquisar IP, Dispositivo, Porta ou Local..."
+                        onkeyup="filtrarTabela('search-onco', 'table-USW-CENTROONCOLOGIA')">
+                </div>
+                <table class="rack-table">
+                    <thead>
+                        <tr>
+                            <th>Switch</th>
+                            <th>Porta SW</th>
+                            <th>Patch Panel</th>
+                            <th>Porta PP</th>
+                            <th>Nome Dispositivo</th>
+                            <th>IP</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-USW-CENTROONCOLOGIA"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="rack-wrapper" id="rack-BS">
-            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Banco de Sangue
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem; margin: 0;">USW - Banco de Sangue</h2>
+                <button class="btn-outline" onclick="toggleTabela('container-bs', this)"
+                    style="padding: 5px 15px; font-size: 0.85rem;">Exibir Relatório</button>
+            </div>
             <div class="rack-container" style="position: relative; margin-bottom: 40px;">
                 <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
 
@@ -233,11 +265,36 @@
                 </div>
 
             </div>
+
+            <div class="rack-table-container" id="container-bs" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="search-bs" class="rack-search"
+                        placeholder="Pesquisar IP, Dispositivo, Porta ou Local..."
+                        onkeyup="filtrarTabela('search-bs', 'table-USW-BANCODESANGUE')">
+                </div>
+                <table class="rack-table">
+                    <thead>
+                        <tr>
+                            <th>Switch</th>
+                            <th>Porta SW</th>
+                            <th>Patch Panel</th>
+                            <th>Porta PP</th>
+                            <th>Nome Dispositivo</th>
+                            <th>IP</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-USW-BANCODESANGUE"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="rack-wrapper" id="rack-matriz1">
-            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Matriz 01
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem; margin: 0;">USW - Matriz 01</h2>
+                <button class="btn-outline" onclick="toggleTabela('container-mz1', this)"
+                    style="padding: 5px 15px; font-size: 0.85rem;">Exibir Relatório</button>
+            </div>
             <div class="rack-container" style="position: relative; margin-bottom: 40px;">
                 <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
 
@@ -319,11 +376,35 @@
                 </div>
 
             </div>
+            <div class="rack-table-container" id="container-mz1" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="search-mz1" class="rack-search"
+                        placeholder="Pesquisar IP, Dispositivo, Porta ou Local..."
+                        onkeyup="filtrarTabela('search-mz1', 'table-USW-MATRIZ01')">
+                </div>
+                <table class="rack-table">
+                    <thead>
+                        <tr>
+                            <th>Switch</th>
+                            <th>Porta SW</th>
+                            <th>Patch Panel</th>
+                            <th>Porta PP</th>
+                            <th>Nome Dispositivo</th>
+                            <th>IP</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-USW-MATRIZ01"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="rack-wrapper" id="rack-matriz2">
-            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Matriz 02
-            </h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem; margin: 0;">USW - Matriz 02</h2>
+                <button class="btn-outline" onclick="toggleTabela('container-mz2', this)"
+                    style="padding: 5px 15px; font-size: 0.85rem;">Exibir Relatório</button>
+            </div>
             <div class="rack-container" style="position: relative; margin-bottom: 40px;">
                 <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
 
@@ -405,10 +486,36 @@
                 </div>
 
             </div>
+            <!-- Relatório com Pesquisa - Matriz 02 -->
+            <div class="rack-table-container" id="container-mz2" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="search-mz2" class="rack-search"
+                        placeholder="Pesquisar IP, Dispositivo, Porta ou Local..."
+                        onkeyup="filtrarTabela('search-mz2', 'table-USW-MATRIZ02')">
+                </div>
+                <table class="rack-table">
+                    <thead>
+                        <tr>
+                            <th>Switch</th>
+                            <th>Porta SW</th>
+                            <th>Patch Panel</th>
+                            <th>Porta PP</th>
+                            <th>Nome Dispositivo</th>
+                            <th>IP</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-USW-MATRIZ02"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="rack-wrapper" id="rack-admin">
-            <h2 style="color: var(--primary); font-size: 1.2rem; margin-bottom: 10px;">USW - Administrativo</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 style="color: var(--primary); font-size: 1.2rem; margin: 0;">USW - Administrativo</h2>
+                <button class="btn-outline" onclick="toggleTabela('container-adm', this)"
+                    style="padding: 5px 15px; font-size: 0.85rem;">Exibir Relatório</button>
+            </div>
             <div class="rack-container" style="position: relative; margin-bottom: 40px;">
                 <svg id="camadaCabosOncologia" class="camada-cabos"></svg>
 
@@ -445,75 +552,97 @@
                     </div>
                 </div>
             </div>
-
-            <!-- MODAL DE CADASTRO ADAPTADO PARA SWITCHES -->
-            <div class="modal-overlay" id="addModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Mapear Nova Porta</h3>
-                        <button class="close-btn" onclick="closeModal()">&times;</button>
-                    </div>
-                    <form id="addForm" onsubmit="saveEquipamento(event)">
-
-                        <div style="display: flex; gap: 15px;">
-                            <div class="form-group" style="flex: 2;">
-                                <label>Nome do Switch</label>
-                                <input type="text" id="formSwitchName" required placeholder="Ex: MATRIZ-01">
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label>Porta (Switch)</label>
-                                <input type="number" id="formSwitchPort" required placeholder="Ex: 24">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Dispositivo Conectado</label>
-                            <input type="text" id="formConnectedDevice" required
-                                placeholder="Ex: Imp-Faturamento ou PC 05">
-                        </div>
-
-                        <div style="display: flex; gap: 15px;">
-                            <div class="form-group" style="flex: 1;">
-                                <label>Endereço IP</label>
-                                <input type="text" id="formIP" placeholder="Ex: 10.0.1.50">
-                            </div>
-                            <div class="form-group" style="flex: 2;">
-                                <label>Localização (Sala/Setor)</label>
-                                <input type="text" id="formLocal" placeholder="Ex: Recepção">
-                            </div>
-                        </div>
-
-                        <div style="display: flex; gap: 15px;">
-                            <div class="form-group" style="flex: 1;">
-                                <label>Patch Panel (PP)</label>
-                                <input type="number" id="formPatchPanel" placeholder="Ex: 1">
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label>Porta do PP (PT)</label>
-                                <input type="number" id="formPatchPort" placeholder="Ex: 12">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Status da Porta</label>
-                            <select id="formStatus">
-                                <option value="Ativo">Ativa</option>
-                                <option value="Inativo/Defeito">Inativa/Defeito</option>
-                                <option value="Fibra/Internet">Fibra/Internet</option>
-                            </select>
-                        </div>
-
-                        <div class="modal-footer">
-                            <!-- Botão de Excluir adicionado e oculto por padrão -->
-                            <button type="button" class="btn-outline" id="btnExcluir"
-                                style="display: none; border-color: var(--primary); color: var(--primary);"
-                                onclick="excluirConexao()">Excluir</button>
-
-                            <button type="submit" class="btn-primary">Salvar no Banco</button>
-                        </div>
-                    </form>
+            <!-- Relatório com Pesquisa - Administrativo -->
+            <div class="rack-table-container" id="container-adm" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="search-adm" class="rack-search"
+                        placeholder="Pesquisar IP, Dispositivo, Porta ou Local..."
+                        onkeyup="filtrarTabela('search-adm', 'table-USW-ADMINISTRATIVO')">
                 </div>
+                <table class="rack-table">
+                    <thead>
+                        <tr>
+                            <th>Switch</th>
+                            <th>Porta SW</th>
+                            <th>Patch Panel</th>
+                            <th>Porta PP</th>
+                            <th>Nome Dispositivo</th>
+                            <th>IP</th>
+                            <th>Local</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-USW-ADMINISTRATIVO"></tbody>
+                </table>
             </div>
+        </div>
+
+        <!-- MODAL DE CADASTRO ADAPTADO PARA SWITCHES -->
+        <div class="modal-overlay" id="addModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Mapear Nova Porta</h3>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="addForm" onsubmit="saveEquipamento(event)">
+
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Nome do Switch</label>
+                            <input type="text" id="formSwitchName" required placeholder="Ex: MATRIZ-01">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Porta (Switch)</label>
+                            <input type="number" id="formSwitchPort" required placeholder="Ex: 24">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dispositivo Conectado</label>
+                        <input type="text" id="formConnectedDevice" required placeholder="Ex: Imp-Faturamento ou PC 05">
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Endereço IP</label>
+                            <input type="text" id="formIP" placeholder="Ex: 10.0.1.50">
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <label>Localização (Sala/Setor)</label>
+                            <input type="text" id="formLocal" placeholder="Ex: Recepção">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Patch Panel (PP)</label>
+                            <input type="number" id="formPatchPanel" placeholder="Ex: 1">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Porta do PP (PT)</label>
+                            <input type="number" id="formPatchPort" placeholder="Ex: 12">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status da Porta</label>
+                        <select id="formStatus">
+                            <option value="Ativo">Ativa</option>
+                            <option value="Inativo/Defeito">Inativa/Defeito</option>
+                            <option value="Fibra/Internet">Fibra/Internet</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <!-- Botão de Excluir adicionado e oculto por padrão -->
+                        <button type="button" class="btn-outline" id="btnExcluir"
+                            style="display: none; border-color: var(--primary); color: var(--primary);"
+                            onclick="excluirConexao()">Excluir</button>
+
+                        <button type="submit" class="btn-primary">Salvar no Banco</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 </body>
 
 </html>
