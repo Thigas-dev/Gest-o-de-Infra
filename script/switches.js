@@ -180,6 +180,8 @@ function renderizarTabelaRack(idTbody, nomeSwitch, dadosDoBanco) {
     conexoes.forEach(conexao => {
         const tr = document.createElement('tr');
 
+        tr.setAttribute('data-id', conexao.IdConexao);
+
         const pp = conexao.PatchPanel ? `PP ${conexao.PatchPanel}` : '-';
         const pt = conexao.PortaPatchPanel || '-';
         const ip = conexao.IP || '-';
@@ -434,16 +436,50 @@ function filtrarTabela(inputId, tbodyId) {
     if (!tbody) return;
 
     const linhas = tbody.getElementsByTagName('tr');
+    const idsEncontrados = []; // Guarda os IDs dos equipamentos que bateram com a pesquisa
 
+    // 1. Filtra a Tabela e coleta os IDs
     for (let i = 0; i < linhas.length; i++) {
-        // Pega todo o texto da linha atual (Dispositivo, IP, Porta, etc)
         const textoLinha = linhas[i].textContent || linhas[i].innerText;
 
-        // Se o texto digitado existir na linha, mostra. Senão, esconde.
         if (textoLinha.toLowerCase().indexOf(filtro) > -1) {
             linhas[i].style.display = "";
+            // Se a linha for visível, anota o ID da conexão
+            idsEncontrados.push(linhas[i].getAttribute('data-id'));
         } else {
             linhas[i].style.display = "none";
+        }
+    }
+
+    // 2. Foco Visual nos Cabos
+    const rackWrapper = tbody.closest('.rack-wrapper');
+    if (rackWrapper && mostrarCabos) {
+        const todosCabosDesteRack = rackWrapper.querySelectorAll('.cabo-rede');
+
+        if (filtro === "") {
+            // Se o campo de pesquisa estiver vazio, devolve todos os cabos ao estado de "repouso"
+            todosCabosDesteRack.forEach(cabo => {
+                cabo.style.opacity = '0.05';
+                cabo.style.strokeWidth = '2px';
+                cabo.style.animation = 'none';
+            });
+        } else {
+            // Se estiver pesquisando, apaga o Rack inteiro e acende só os cabos filtrados
+            todosCabosDesteRack.forEach(cabo => {
+                // O ID do SVG é "cabo-25". Tiramos o "cabo-" para comparar só o número "25"
+                const idCabo = cabo.id.replace('cabo-', '');
+
+                if (idsEncontrados.includes(idCabo)) {
+                    // Liga o Neon e a Animação
+                    cabo.style.opacity = '1';
+                    cabo.style.strokeWidth = '4px';
+                    cabo.style.animation = 'fluxoDados 30s linear infinite';
+                } else {
+                    // Oculta completamente os que não combinam com a pesquisa
+                    cabo.style.opacity = '0.01';
+                    cabo.style.animation = 'none';
+                }
+            });
         }
     }
 }

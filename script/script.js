@@ -1,19 +1,32 @@
-// 1. Busca os dados da API Python e distribui na tela
+// 1. Busca os dados da API Python (Impressoras e Switches) e distribui na tela
 async function carregarDashboard() {
     try {
-        const response = await fetch('http://localhost:8000/api/impressoras');
-        if (!response.ok) throw new Error("Erro de comunicação HTTP");
-        
-        const dadosImpressoras = await response.json();
-        
+        const [respImpressoras, respConexoes] = await Promise.all([
+            fetch('http://localhost:8000/api/impressoras'),
+            fetch('http://localhost:8000/api/conexoes')
+        ]);
+
+        if (!respImpressoras.ok || !respConexoes.ok) {
+            throw new Error("Erro de comunicação HTTP");
+        }
+
+        const dadosImpressoras = await respImpressoras.json();
+        const dadosConexoes = await respConexoes.json();
+
+        // Dispara as atualizações na tela
         atualizarEstatisticas(dadosImpressoras);
+        atualizarEstatisticasRede(dadosConexoes);
         renderizarGraficos(dadosImpressoras);
+
+        // AQUI ESTÁ O SEGREDO QUE FALTAVA:
+        renderizarGraficoRacks(dadosConexoes);
+
     } catch (error) {
         console.error("Erro ao carregar o dashboard:", error);
     }
 }
 
-// 2. Atualiza os cards coloridos lá do topo
+// 2. Atualiza os cards das Impressoras
 function atualizarEstatisticas(dados) {
     let countNaRede = 0;
     let countReserva = 0;
@@ -25,12 +38,43 @@ function atualizarEstatisticas(dados) {
 
     const elNaRede = document.getElementById('count-na-rede');
     const elReserva = document.getElementById('count-reserva');
-    
+
     if (elNaRede) elNaRede.innerText = countNaRede;
     if (elReserva) elReserva.innerText = countReserva;
 }
 
-// 3. Constrói os gráficos da Visão Gerencial
+// 3. NOVA FUNÇÃO: Atualiza os cards de Rede / Switches
+function atualizarEstatisticasRede(dadosConexoes) {
+    let countAtivos = 0;
+    let countInativos = 0;
+    const racksUnicos = new Set();
+
+    dadosConexoes.forEach(conexao => {
+        // Salva o nome do switch no "Set" (o Set ignora nomes repetidos automaticamente)
+        racksUnicos.add(conexao.NomeSwitch);
+
+        // Conta status
+        if (conexao.StatusPorta === 'Ativo' || conexao.StatusPorta === 'Fibra/Internet') {
+            countAtivos++;
+        } else if (conexao.StatusPorta === 'Inativo/Defeito') {
+            countInativos++;
+        }
+    });
+
+    // Pega os elementos lá do HTML (index.html)
+    const elTotalPortas = document.getElementById('dash-portas-mapeadas');
+    const elRacks = document.getElementById('dash-switches-fisicos');
+    const elPortasAtivas = document.getElementById('dash-portas-ativas');
+    const elPortasInativas = document.getElementById('dash-portas-inativas');
+
+    // Joga os valores na tela
+    if (elTotalPortas) elTotalPortas.innerText = dadosConexoes.length;
+    if (elRacks) elRacks.innerText = racksUnicos.size; // Vai mostrar "6"
+    if (elPortasAtivas) elPortasAtivas.innerText = countAtivos;
+    if (elPortasInativas) elPortasInativas.innerText = countInativos;
+}
+
+// 4. Constrói os gráficos da Visão Gerencial
 function renderizarGraficos(dados) {
     // Conta quantas impressoras de cada marca existem
     const marcasCount = {};
@@ -42,13 +86,9 @@ function renderizarGraficos(dados) {
         statusCount[item.Status] = (statusCount[item.Status] || 0) + 1;
     });
 
-    // Usa as mesmas cores do seu CSS para manter o padrão visual
-    // Azul (tertiary), Vermelho (primary), Cinza (neutral), e Vermelho Claro (secondary)
-    const coresPadrao = ['#00638D', '#D83F3C', '#887270', '#B85C55'];
+    const coresPadrao = ['#00638D', '#ff7f0e', '#d62728', '#B85C55'];
 
-    // ----------------------------------------------------
-    // GRÁFICO 1: Distribuição por Fabricante (Doughnut)
-    // ----------------------------------------------------
+    // GRÁFICO 1: Distribuição por Fabricante
     new Chart(document.getElementById('chartMarcas'), {
         type: 'doughnut',
         data: {
@@ -56,22 +96,18 @@ function renderizarGraficos(dados) {
             datasets: [{
                 data: Object.values(marcasCount),
                 backgroundColor: coresPadrao,
-                borderWidth: 0 // Remove a borda para ficar melhor no glassmorphism
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '75%', // Deixa o anel mais fino e elegante
-            plugins: {
-                legend: { position: 'bottom' }
-            }
+            cutout: '75%',
+            plugins: { legend: { position: 'bottom' } }
         }
     });
 
-    // ----------------------------------------------------
-    // GRÁFICO 2: Status do Parque (Barras)
-    // ----------------------------------------------------
+    // GRÁFICO 2: Status do Parque
     new Chart(document.getElementById('chartStatus'), {
         type: 'bar',
         data: {
@@ -79,20 +115,68 @@ function renderizarGraficos(dados) {
             datasets: [{
                 label: 'Equipamentos',
                 data: Object.values(statusCount),
-                backgroundColor: ['#00638D', '#887270'], // Azul pra Ok, Cinza pra Reserva
-                borderRadius: 8 // Arredonda a ponta da barra
+                backgroundColor: ['#008d23', '#887270'],
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+}
+
+// ========================================================
+// NOVO GRÁFICO: OCUPAÇÃO POR RACK
+// ========================================================
+function renderizarGraficoRacks(dadosConexoes) {
+    const canvasRack = document.getElementById('chartRacks');
+    if (!canvasRack) return;
+
+    // 1. Conta quantas portas estão sendo usadas em cada Rack
+    const racksCount = {};
+    dadosConexoes.forEach(item => {
+        const nome = item.NomeSwitch;
+        racksCount[nome] = (racksCount[nome] || 0) + 1;
+    });
+
+    // 2. Paleta de Cores Personalizada (uma cor para cada barra)
+    const paletaDeCores = [
+        '#084594',
+        '#2171B5',
+        '#4292C6',
+        '#6BAED6',
+        '#9ECAE1',
+        '#C6DBEF'
+    ];
+
+    // 3. Monta o gráfico
+    new Chart(canvasRack, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(racksCount),
+            datasets: [{
+                label: 'Portas Mapeadas',
+                data: Object.values(racksCount),
+
+                // AQUI: Injetamos a lista de cores em vez de uma cor só
+                backgroundColor: paletaDeCores,
+
+                borderRadius: 6
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false } // Esconde a legenda desnecessária
+                legend: { display: false }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1 } // Não queremos números quebrados (ex: 1.5 impressoras)
+                    ticks: { stepSize: 5 }
                 }
             }
         }

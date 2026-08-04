@@ -203,17 +203,20 @@ body {
 }
 
 .btn-outline {
-    background: transparent;
-    border: 1px solid var(--neutral);
+    background: #ffffffBf;
+    border: 1px solid var(--glass-border);
     color: var(--neutral);
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .btn-outline:hover {
-    background: #f0f0f0;
+    background: var(--neutral);
+    color: white;
+    transform: translateY(-2px);
 }
 
 /* Container do Rack */

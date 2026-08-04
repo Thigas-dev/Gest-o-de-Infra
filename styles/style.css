@@ -8,6 +8,7 @@
             --bg-color: #dadada;
             --glass-bg: rgba(255, 255, 255, 0.75);
             --glass-border: rgba(255, 255, 255, 0.6);
+            --ativo: #008d23;
         }
 
         * {
@@ -134,16 +135,20 @@
         }
 
         .stat-card {
-            border-left: 5px solid var(--tertiary);
-            border-color: var(--tertiary);
+            border-left: 5px solid var(--primary);
+            border-color: var(--primary);
         }
 
         .stat-card.secondary {
-            border-color: var(--neutral);
+            border-color: var(--primary);
         }
 
         .stat-card.alert {
-            border-color: var(--primary);
+            border-color: var(--neutral);
+        }
+
+        .stat-card.ativo {
+            border-color: var(--ativo);
         }
 
         .stat-value {

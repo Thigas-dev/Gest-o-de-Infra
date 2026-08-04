@@ -50,7 +50,7 @@ function renderCards(data) {
                 </div>
             </div>
             <div class="printer-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn-outline" style="border-color: var(--primary); color: var(--primary);" onclick="excluirImpressora(${item.ID})">Excluir</button>
+                <button class="btn-outline-ex" onclick="excluirImpressora(${item.ID})">Excluir</button>
                 <button class="btn-edit" onclick="abrirEdicao(${item.ID})">Editar Ativo</button>
             </div>
         `;

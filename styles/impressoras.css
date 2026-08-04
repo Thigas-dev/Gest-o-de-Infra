@@ -4,7 +4,8 @@
     --primary: #B32325;
     --secondary: #B85C55;
     --tertiary: #00638D;
-    --neutral: #887270;
+    --neutral: #5e3d3a;
+    --ativo: #008d23;
     --bg-color: #dadada;
     --glass-bg: rgba(255, 255, 255, 0.75);
     --glass-border: rgba(255, 255, 255, 0.6);
@@ -179,7 +180,7 @@ body {
 .printer-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--tertiary);
+    color: var(--primary);
     word-break: break-all;
 }
 
@@ -194,7 +195,7 @@ body {
 }
 
 .badge-ok {
-    background-color: var(--tertiary);
+    background-color: var(--ativo);
 }
 
 .badge-alert {
@@ -348,5 +349,21 @@ body {
 }
 
 .btn-outline:hover {
-    background: #f0f0f0;
+    background: var(--neutral);
+    color: white;
+}
+
+.btn-outline-ex {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-outline-ex:hover {
+    background: var(--primary);
+    color: white;
 }

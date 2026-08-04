@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Infra - Relatórios</title>
+
+    <!-- Usando o mesmo CSS principal dos switches para manter o padrão -->
+    <link rel="stylesheet" href="/styles/switches.css">
+    <link rel="stylesheet" href="/styles/telefones.css">
+    <script src="/script/telefones.js" defer></script>
+
+    <!-- Ícones -->
+    <link rel="icon" href="/img/icon/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/img/fotos/logo.png" alt="Logo Portal Infra"
+                style="width: 40px; height: auto; margin-right: 10px;">
+            Portal Infra Honcord
+        </div>
+
+        <a href="/pages/index.html" class="nav-item">Dashboard</a>
+        <a href="/pages/impressoras.html" class="nav-item">Ativos (Impressoras)</a>
+        <a href="/pages/switches.html" class="nav-item">Switches & Portas</a>
+        <a href="/pages/telefones.html" class="nav-item active">Telefones</a>
+        <a href="/pages/relatorios.html" class="nav-item">Relatórios</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header-action">
+            <h1>Mapeamento de Ramais</h1>
+        </div>
+
+        <!-- Barra de Pesquisa -->
+        <div class="search-container">
+            <input type="text" id="searchRamal" class="glass-input"
+                placeholder="Pesquisar por Ramal, Patch Panel ou Porta..." onkeyup="filtrarRamais()">
+        </div>
+
+        <!-- Onde o JavaScript vai injetar os cartões -->
+        <div class="ramais-grid" id="gridRamais">
+            <!-- Os cards entrarão aqui dinamicamente -->
+        </div>
+    </div>
+</body>
+
+</html>
