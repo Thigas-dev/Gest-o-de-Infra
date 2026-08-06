@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Infra - Impressoras</title>
-    
+
     <link rel="stylesheet" href="/styles/impressoras.css">
     <script src="/script/imp.js" defer></script>
 
     <!-- Ícones -->
     <link rel="icon" href="/img/icon/favicon.ico" type="image/x-icon">
 </head>
+
 <body>
     <div class="sidebar">
         <div class="logo">
-            <img src="/img/fotos/logo.png" alt="Logo Portal Infra" style="width: 40px; height: auto; margin-right: 10px;">
+            <img src="/img/fotos/logo.png" alt="Logo Portal Infra"
+                style="width: 40px; height: auto; margin-right: 10px;">
             Portal Infra Honcord
         </div>
-        
+
         <a href="/pages/index.html" class="nav-item">Dashboard</a>
         <a href="/pages/impressoras.html" class="nav-item active">Ativos (Impressoras)</a>
         <a href="/pages/switches.html" class="nav-item">Switches & Portas</a>
@@ -34,7 +37,8 @@
 
         <div class="assets-header">
             <input type="text" class="search-bar" id="searchInput"
-                placeholder="Pesquisar por IP, Hostname, Modelo ou Serial..." onkeyup="filterCards()" style="width: 100%; max-width: 600px;">
+                placeholder="Pesquisar por IP, Hostname, Modelo ou Serial..." onkeyup="filterCards()"
+                style="width: 100%; max-width: 600px;">
         </div>
 
         <!-- Grid exclusivo para as impressoras -->
@@ -77,10 +81,15 @@
                         <label>Serial</label>
                         <input type="text" id="formSerial" required placeholder="Ex: U64198L7N608948">
                     </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label>MAC Address</label>
+                        <input type="text" id="formMac" placeholder="Ex: 3c-2a-f4-3a-f5-0e">
+                    </div>
                     <div class="form-group" style="flex: 1;">
                         <label>Status</label>
                         <select id="formStatus">
                             <option value="Na Rede">Na Rede</option>
+                            <option value="Local">Local</option>
                             <option value="Reserva">Reserva</option>
                         </select>
                     </div>
@@ -93,4 +102,5 @@
         </div>
     </div>
 </body>
+
 </html>

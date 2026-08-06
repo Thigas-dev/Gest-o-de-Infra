@@ -1,74 +1,356 @@
-/* ========================================================
-   ESTILOS EXCLUSIVOS - PÁGINA DE TELEFONES / RAMAIS
-======================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-.search-container {
-    margin-bottom: 25px;
+:root {
+    --primary: #B32325;
+    --secondary: #B85C55;
+    --tertiary: #00638D;
+    --neutral: #5e3d3a;
+    --ativo: #008d23;
+    --bg-color: #dadada;
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.6);
 }
 
-.glass-input {
-    width: 100%;
-    max-width: 500px;
-    padding: 12px 20px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--primary);
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--glass-bg);
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-item {
+    padding: 14px 15px;
+    margin-bottom: 12px;
+    background-color: transparent;
     border-radius: 8px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.6);
-    color: var(--neutral);
-    font-size: 1rem;
-    outline: none;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: block;
 }
 
-.glass-input:focus {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: var(--primary);
-    box-shadow: 0 0 10px rgba(186, 12, 47, 0.2);
+.nav-item:hover {
+    background-color: var(--secondary);
+    color: white;
 }
 
-/* Sistema de Grid para os Ramais */
-.ramais-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-/* Cartão Individual do Ramal */
-.ramal-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(12px);
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 15px var(--shadow-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.ramal-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px var(--shadow-color);
-}
-
-.ramal-numero {
-    font-size: 2rem;
-    font-weight: bold;
+.nav-item.active {
+    background-color: white;
     color: var(--primary);
-    /* Seu tom de vermelho */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Conteúdo Principal */
+.main-content {
+    flex: 1;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.header-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--glass-bg);
+    padding-bottom: 20px;
     margin-bottom: 10px;
 }
 
-.ramal-porta {
+.header-action h1 {
+    color: var(--primary);
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(216, 63, 60, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(216, 63, 60, 0.4);
+}
+
+/* Header do Inventário (Barra de Pesquisa) */
+.assets-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.search-bar {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
     font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.search-bar:focus {
+    border-color: var(--tertiary);
+}
+
+/* ========================================================
+   TABELA COMPACTA (Substitui os Cards)
+======================================================== */
+.table-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    overflow-x: auto;
+    /* Adiciona barra de rolagem se a tela for pequena */
+}
+
+.glass-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.glass-table th {
+    padding: 12px 15px;
+    color: var(--neutral);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.glass-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: #444;
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.glass-table tr:hover td {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Badges e Botões da Tabela */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-ok {
+    background-color: var(--ativo);
+}
+
+.badge-alert {
+    background-color: var(--neutral);
+}
+
+.badge-nao-mapeado {
+    background-color: var(--primary);
+}
+
+.btn-edit {
+    background: transparent;
+    border: 1px solid var(--tertiary);
+    color: var(--tertiary);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.btn-edit:hover {
+    background: var(--tertiary);
+    color: white;
+}
+
+/* Formatação do texto do Ramal e da Porta */
+.ramal-porta {
+    font-size: 0.90rem;
     color: var(--neutral);
     background: rgba(255, 255, 255, 0.5);
-    padding: 5px 10px;
+    padding: 4px 8px;
     border-radius: 6px;
     display: inline-block;
 }
 
 .ramal-vazio {
-    color: #888;
+    color: rgba(0, 0, 0, 0.4);
     font-style: italic;
-    background: rgba(0, 0, 0, 0.05);
+    font-size: 0.90rem;
+}
+
+/* Modal Novo Mapeamento */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    width: 500px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.modal-header h3 {
+    color: var(--tertiary);
+    font-size: 1.5rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--neutral);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
+    text-align: left;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+}
+
+.modal-footer {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--neutral);
+    color: var(--neutral);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-outline:hover {
+    background: var(--neutral);
+    color: white;
+}
+
+.btn-outline-ex {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-outline-ex:hover {
+    background: var(--primary);
+    color: white;
 }

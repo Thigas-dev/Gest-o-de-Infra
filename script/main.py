@@ -39,6 +39,7 @@ class ImpressoraDB(Base):
     IdFabricante = Column(Integer, ForeignKey("Fabricantes.IdFabricante"))
     Modelo = Column(String(100))
     NumeroSerial = Column(String(100))
+    MAC = Column(String(50), nullable=True)
     StatusAtivo = Column(String(50), default='Na Rede')
 
     # Relacionamento
@@ -55,6 +56,7 @@ class ImpressoraResponse(BaseModel):
     Modelo: str
     Serial: str
     Status: str
+    MAC: str | None = None
 
     class Config:
         orm_mode = True
@@ -99,6 +101,7 @@ def listar_impressoras_com_marcas(db: Session = Depends(get_db)):
             "Marca": fabricante.NomeMarca,
             "Modelo": impressora.Modelo,
             "Serial": impressora.NumeroSerial,
+            "MAC": impressora.MAC,
             "Status": impressora.StatusAtivo
         })
         
@@ -112,6 +115,7 @@ class ImpressoraCreate(BaseModel):
     Modelo: str
     Serial: str
     Status: str
+    MAC: str | None = None
 
 # Adicione esta nova rota no final do arquivo
 @app.post("/api/impressoras", response_model=ImpressoraResponse)
@@ -131,7 +135,8 @@ def adicionar_impressora(impressora: ImpressoraCreate, db: Session = Depends(get
         IdFabricante=fabricante.IdFabricante,
         Modelo=impressora.Modelo,
         NumeroSerial=impressora.Serial,
-        StatusAtivo=impressora.Status
+        StatusAtivo=impressora.Status,
+        MAC=impressora.MAC
     )
     
     # 3. Salvar no SQL Server
@@ -172,6 +177,7 @@ def atualizar_impressora(impressora_id: int, impressora: ImpressoraCreate, db: S
     db_impressora.Modelo = impressora.Modelo
     db_impressora.NumeroSerial = impressora.Serial
     db_impressora.StatusAtivo = impressora.Status
+    db_impressora.MAC = impressora.MAC
 
     # 4. Salva a edição no banco de dados e atualiza o objeto
     db.commit()
@@ -275,3 +281,70 @@ def deletar_conexao(conexao_id: int, db: Session = Depends(get_db)):
     db.commit()
     
     return {"mensagem": "Mapeamento excluído com sucesso!"}
+
+
+# ---------------------------------------------------------
+# MODELOS PARA TELEFONES / RAMAIS
+# ---------------------------------------------------------
+class RamalDB(Base):
+    __tablename__ = "Ramais"
+    IdRamal = Column(Integer, primary_key=True, index=True)
+    NumeroRamal = Column(String(20), nullable=False)
+    SipPorta = Column(String(100), nullable=True)
+    PatchPanel = Column(String(100), nullable=True)
+    Local = Column(String(100), nullable=True)
+    Status = Column(String(50), default='Ativo')
+
+class RamalSchema(BaseModel):
+    NumeroRamal: str
+    SipPorta: str | None = None
+    PatchPanel: str | None = None
+    Local: str | None = None
+    Status: str = 'Ativo'
+
+class RamalResponse(RamalSchema):
+    IdRamal: int
+    class Config:
+        orm_mode = True
+
+# ---------------------------------------------------------
+# ROTAS PARA TELEFONES / RAMAIS
+# ---------------------------------------------------------
+@app.get("/api/ramais", response_model=list[RamalResponse])
+def listar_ramais(db: Session = Depends(get_db)):
+    """Retorna todos os ramais mapeados."""
+    return db.query(RamalDB).all()
+
+@app.post("/api/ramais", response_model=RamalResponse)
+def adicionar_ramal(ramal: RamalSchema, db: Session = Depends(get_db)):
+    """Cadastra um novo ramal."""
+    novo_ramal = RamalDB(**ramal.dict())
+    db.add(novo_ramal)
+    db.commit()
+    db.refresh(novo_ramal)
+    return novo_ramal
+
+@app.put("/api/ramais/{ramal_id}", response_model=RamalResponse)
+def atualizar_ramal(ramal_id: int, ramal: RamalSchema, db: Session = Depends(get_db)):
+    """Atualiza um ramal existente."""
+    db_ramal = db.query(RamalDB).filter(RamalDB.IdRamal == ramal_id).first()
+    if not db_ramal:
+        raise HTTPException(status_code=404, detail="Ramal não encontrado.")
+
+    for var, value in ramal.dict().items():
+        setattr(db_ramal, var, value)
+
+    db.commit()
+    db.refresh(db_ramal)
+    return db_ramal
+
+@app.delete("/api/ramais/{ramal_id}")
+def deletar_ramal(ramal_id: int, db: Session = Depends(get_db)):
+    """Remove um ramal do banco de dados."""
+    db_ramal = db.query(RamalDB).filter(RamalDB.IdRamal == ramal_id).first()
+    if not db_ramal:
+        raise HTTPException(status_code=404, detail="Ramal não encontrado.")
+
+    db.delete(db_ramal)
+    db.commit()
+    return {"mensagem": "Ramal excluído com sucesso!"}

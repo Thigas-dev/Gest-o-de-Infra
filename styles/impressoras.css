@@ -180,7 +180,7 @@ body {
 .printer-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--primary);;
     word-break: break-all;
 }
 

@@ -4,10 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Infra - Relatórios</title>
+    <title>Portal Infra - Telefones</title>
 
-    <!-- Usando o mesmo CSS principal dos switches para manter o padrão -->
-    <link rel="stylesheet" href="/styles/switches.css">
     <link rel="stylesheet" href="/styles/telefones.css">
     <script src="/script/telefones.js" defer></script>
 
@@ -30,20 +28,87 @@
         <a href="/pages/relatorios.html" class="nav-item">Relatórios</a>
     </div>
 
+    <!-- CONTEÚDO PRINCIPAL FOCADO EM GERENCIAMENTO -->
     <div class="main-content">
         <div class="header-action">
             <h1>Mapeamento de Ramais</h1>
+            <button class="btn-primary" onclick="abrirModalRamal()">+ Novo Ramal</button>
         </div>
 
-        <!-- Barra de Pesquisa -->
-        <div class="search-container">
-            <input type="text" id="searchRamal" class="glass-input"
-                placeholder="Pesquisar por Ramal, Patch Panel ou Porta..." onkeyup="filtrarRamais()">
+        <div class="assets-header">
+            <input type="text" class="search-bar" id="searchRamal"
+                placeholder="Pesquisar por Ramal, Patch Panel ou Responsável..." onkeyup="filtrarRamais()"
+                style="width: 100%; max-width: 600px;">
         </div>
 
-        <!-- Onde o JavaScript vai injetar os cartões -->
-        <div class="ramais-grid" id="gridRamais">
-            <!-- Os cards entrarão aqui dinamicamente -->
+        <!-- Grid exclusivo para os Ramais -->
+        <!-- Tabela Compacta para os Ramais -->
+        <div class="table-container">
+            <table class="glass-table">
+                <thead>
+                    <tr>
+                        <th>Ramal</th>
+                        <th>SIP / Porta</th>
+                        <th>Patch Panel / PP</th>
+                        <th>Local / Responsável</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="gridRamais">
+                    <!-- O JavaScript vai injetar as linhas (<tr>) aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO NO ESTILO IMPRESSORAS -->
+    <div class="modal-overlay" id="modalRamal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Adicionar Ramal</h3>
+                <button class="close-btn" onclick="fecharModalRamal()">&times;</button>
+            </div>
+
+            <form id="formRamal" onsubmit="salvarRamal(event)">
+                <input type="hidden" id="ramalId">
+
+                <div class="form-group">
+                    <label>Número do Ramal</label>
+                    <input type="text" id="numRamal" required placeholder="Ex: 6648">
+                </div>
+
+                <div class="form-group">
+                    <label>Gateway SIP / Porta</label>
+                    <input type="text" id="sipRamal" placeholder="Ex: 10.0.1.162 - Porta 08">
+                </div>
+
+                <div class="form-group">
+                    <label>Patch Panel / PP</label>
+                    <input type="text" id="ppRamal" placeholder="Ex:P01  - Porta 08">
+                </div>
+
+                <div class="form-group">
+                    <label>Local / Responsável</label>
+                    <input type="text" id="localRamal" placeholder="Ex: Adm Enfermagem Kátia">
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="statusRamal">
+                        <option value="Ativo">Ativo</option>
+                        <option value="Não Mapeado">Não Mapeado</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline-ex" id="btnExcluirRamal" style="display:none;"
+                        onclick="excluirRamal()">Excluir</button>
+                    <button type="button" class="btn-outline" onclick="fecharModalRamal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
         </div>
     </div>
 </body>

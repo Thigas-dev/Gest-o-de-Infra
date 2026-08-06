@@ -115,7 +115,7 @@ function renderizarGraficos(dados) {
             datasets: [{
                 label: 'Equipamentos',
                 data: Object.values(statusCount),
-                backgroundColor: ['#008d23', '#887270'],
+                backgroundColor: ['#008d23', '#f8dd41', '#887270'],
                 borderRadius: 8
             }]
         },

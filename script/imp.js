@@ -37,6 +37,10 @@ function renderCards(data) {
                     <div class="info-value">${item.IP}</div>
                 </div>
                 <div class="info-row">
+                    <div class="info-label">MAC</div>
+                    <div class="info-value">${item.MAC || '-'}</div>
+                </div>
+                <div class="info-row">
                     <div class="info-label">Serial</div>
                     <div class="info-value">${item.Serial}</div>
                 </div>
@@ -95,7 +99,9 @@ function abrirEdicao(id) {
     document.getElementById('formModelo').value = impressora.Modelo;
     document.getElementById('formMarca').value = impressora.Marca;
     document.getElementById('formSerial').value = impressora.Serial;
+    document.getElementById('formMac').value = impressora.MAC || '';
     document.getElementById('formStatus').value = impressora.Status;
+
 
     impressoraEditandoId = id;
     document.querySelector('.modal-header h3').innerText = 'Editar Equipamento';
@@ -112,6 +118,7 @@ async function saveEquipamento(event) {
         Modelo: document.getElementById('formModelo').value,
         Marca: document.getElementById('formMarca').value,
         Serial: document.getElementById('formSerial').value,
+        MAC: document.getElementById('formMac').value || "",
         Status: document.getElementById('formStatus').value
     };
 
